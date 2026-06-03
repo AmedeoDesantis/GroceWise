@@ -6,13 +6,22 @@ from datetime import datetime
 
 router = APIRouter(prefix="/fridge", tags=["Fridge Management"])
 
-@router.get("/products", response_model=list[Product])
+@router.get("/products/unconsumed", response_model=list[Product])
 def get_unconsumed_products(
     # Diciamo a FastAPI di chiamare il metodo del container per avere il servizio pronto
     service: FridgeService = Depends(AppContainer.get_fridge_service)
 ):
     try:
         return service.get_all_unconsumed_products()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/products/all", response_model=list[Product])
+def get_all_products(
+    service: FridgeService = Depends(AppContainer.get_fridge_service)
+):
+    try:
+        return service.get_all_products()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -38,5 +47,28 @@ def consume_product(
         if not success:
             raise HTTPException(status_code=404, detail="Product not found or already consumed")
         return {"status": "success", "message": f"Product {product_id} marked as consumed"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.delete("/products/{product_id}", status_code=200)
+def delete_product(
+    product_id: str = Path(..., min_length=24, max_length=24),
+    service: FridgeService = Depends(AppContainer.get_fridge_service)
+):
+    try:
+        success = service.delete_product(product_id)
+        if not success:
+            raise HTTPException(status_code=404, detail="Product not found")
+        return {"status": "success", "message": f"Product {product_id} deleted"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.delete("/products/all", status_code=200)
+def delete_all_products(
+    service: FridgeService = Depends(AppContainer.get_fridge_service)
+):
+    try:
+        deleted_count = service.delete_all_products()
+        return {"status": "success", "message": f"Deleted {deleted_count} products"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -31,10 +31,9 @@ class ProductRepository:
         
     def add_product(self, product: Product) -> str:
         """Salvataggio puro sul DB"""
-        coll = self.mongo._get_coll(self.COLLECTION)
         product_dict = self._model_dump(product)
-        result = coll.insert_one(product_dict)
-        return str(result.inserted_id)
+        result = self.mongo.insert_one(self.COLLECTION, product_dict)
+        return str(result)
     
     def get_all_products(self) -> list[Product]:
         """Recupera i documenti e li mappa in oggetti di Dominio usando la Factory"""
@@ -43,11 +42,16 @@ class ProductRepository:
     
     def update_product(self, product_id: str, updated_fields: dict) -> bool:
         """Aggiorna convertendo la stringa ID in un vero ObjectId di Mongo"""
-        coll = self.mongo._get_coll(self.COLLECTION)
         query_filtro = {"_id": ObjectId(product_id)}
-        
-        result = coll.update_one(query_filtro, {"$set": updated_fields})
-        return result.modified_count > 0
+        return self.mongo.update_one(self.COLLECTION, query_filtro, updated_fields)
     
     def mark_product_as_consumed(self, product_id: str, finish_date) -> bool:
         return self.update_product(product_id, {"finish_date": finish_date})
+    
+    def delete_product(self, product_id: str) -> bool:
+        query_filtro = {"_id": ObjectId(product_id)}
+        return self.mongo.delete_one(self.COLLECTION, query_filtro)
+    
+    def delete_all(self) -> int:
+        """Metodo di utilità per i test: cancella tutti i prodotti e ritorna il numero di documenti eliminati"""
+        return self.mongo.delete_all(self.COLLECTION)

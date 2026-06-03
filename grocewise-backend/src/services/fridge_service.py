@@ -26,3 +26,11 @@ class FridgeService:
     def mark_product_as_consumed(self, product_id: str, finish_date) -> bool:
         """Orchestra la consumazione di un alimento"""
         return self.repository.mark_product_as_consumed(product_id, finish_date)
+    
+    def delete_product(self, product_id: str) -> bool:
+        """Orchestra la cancellazione di un prodotto dal frigo"""
+        return self.repository.delete_product(product_id)
+    
+    def delete_all_products(self) -> int:
+        """Metodo di utilità per i test: cancella tutti i prodotti e ritorna il numero di documenti eliminati"""
+        return self.repository.delete_all()

@@ -24,6 +24,21 @@ class MongoDB:
         result = coll.insert_one(data)
         return str(result.inserted_id)
     
+    def update_one(self, collection_name: str, query: Dict, update_data: Dict) -> bool:
+        coll = self._get_coll(collection_name)
+        result = coll.update_one(query, {"$set": update_data})
+        return result.modified_count > 0
+
+    def delete_one(self, collection_name: str, query: Dict) -> bool:
+        coll = self._get_coll(collection_name)
+        result = coll.delete_one(query)
+        return result.deleted_count > 0
+    
+    def delete_all(self, collection_name: str) -> int:
+        coll = self._get_coll(collection_name)
+        result = coll.delete_many({})
+        return result.deleted_count
+    
     def find(self, collection_name: str, query: Dict = {}) -> list:
         coll = self._get_coll(collection_name)
         return list(coll.find(query))
