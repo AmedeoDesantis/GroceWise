@@ -23,3 +23,7 @@ class MongoDB:
         coll = self._get_coll(collection_name)
         result = coll.insert_one(data)
         return str(result.inserted_id)
+    
+    def find(self, collection_name: str, query: Dict = {}) -> list:
+        coll = self._get_coll(collection_name)
+        return list(coll.find(query))
