@@ -1,31 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
-
-const API_BASE_URL = 'http://localhost:8000'; // Adatta se necessario
-
-interface Nutrients {
-    calories?: number;
-    carbohydrates?: number;
-    proteins?: number;
-    fats?: number;
-}
-
-interface Product {
-    db_id?: string;
-    barcode: string;
-    name: string;
-    brand?: string;
-    price: number;
-    buy_date?: string;
-    finish_date?: string;
-    nutrients?: Nutrients;
-    ingredients?: string[];
-    weight?: number;
-}
-
-interface AddProductResponse {
-    status: string;
-    inserted_id: string;
-}
+import { Product, AddProductResponse } from '../../types';
+import { API_BASE_URL, API_TIMEOUT } from '../../constants/config';
 
 class FridgeAPI {
     private api: AxiosInstance;
@@ -33,7 +8,7 @@ class FridgeAPI {
     constructor() {
         this.api = axios.create({
             baseURL: API_BASE_URL,
-            timeout: 10000,
+            timeout: API_TIMEOUT,
         });
     }
 
