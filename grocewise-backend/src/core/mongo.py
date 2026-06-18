@@ -12,7 +12,8 @@ class MongoDB:
         host = os.getenv("MONGO_HOST", "localhost")
         port = os.getenv("MONGO_PORT", "27017")
         
-        uri = f"mongodb://{user}:{password}@{host}:{port}/"
+        uri = f"mongodb+srv://{user}:{password}@grocewise.3qqbplk.mongodb.net/?appName=GroceWise"    
+        
         self.client = MongoClient(uri)
         self.db = self.client["grocewise_db"]
 
