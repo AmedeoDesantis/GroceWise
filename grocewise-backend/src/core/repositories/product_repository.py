@@ -35,6 +35,17 @@ class ProductRepository:
         result = self.mongo.insert_one(self.COLLECTION, product_dict)
         return str(result)
     
+    def get_products_by_date_range(self, start_date, end_date) -> list[Product]:
+        """Recupera i prodotti filtrando per intervallo di date di acquisto"""
+        query = {
+            "buy_date": {
+                "$gte": start_date,
+                "$lte": end_date
+            }
+        }
+        raw_products = self.mongo.find(self.COLLECTION, query)
+        return [self.factory.build_from_dict(raw) for raw in raw_products]
+    
     def get_all_products(self) -> list[Product]:
         """Recupera i documenti e li mappa in oggetti di Dominio usando la Factory"""
         raw_products = self.mongo.find(self.COLLECTION)

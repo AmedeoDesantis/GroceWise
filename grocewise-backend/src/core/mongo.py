@@ -9,8 +9,6 @@ class MongoDB:
         load_dotenv()
         user = os.getenv("MONGO_ROOT_USER")
         password = os.getenv("MONGO_ROOT_PASSWORD")
-        host = os.getenv("MONGO_HOST", "localhost")
-        port = os.getenv("MONGO_PORT", "27017")
         
         uri = f"mongodb+srv://{user}:{password}@grocewise.3qqbplk.mongodb.net/?appName=GroceWise"    
         

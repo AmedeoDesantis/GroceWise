@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
 from src.services.fridge_service import FridgeService
 from src.core.models.product import Product
-from src.core.containers.fridge_container import AppContainer 
+from src.core.containers.app_container import AppContainer 
 from datetime import datetime
 
 router = APIRouter(prefix="/fridge", tags=["Fridge Management"])
@@ -29,10 +29,11 @@ def get_all_products(
 def add_product(
     barcode: str = Query(..., min_length=8, max_length=13),
     price: float = Query(0.0, ge=0),
+    buy_date: datetime = Query(default_factory=datetime.now),
     service: FridgeService = Depends(AppContainer.get_fridge_service)
 ):
     try:
-        inserted_id = service.add_product_from_barcode(barcode=barcode, price=price, buy_date=datetime.now())
+        inserted_id = service.add_product_from_barcode(barcode=barcode, price=price, buy_date=buy_date)
         return {"status": "success", "inserted_id": inserted_id}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -40,10 +41,11 @@ def add_product(
 @router.post("/products/{product_id}/consume", status_code=200)
 def consume_product(
     product_id: str = Path(..., min_length=24, max_length=24),
+    finish_date: datetime = Query(default_factory=datetime.now),
     service: FridgeService = Depends(AppContainer.get_fridge_service)
 ):
     try:
-        success = service.mark_product_as_consumed(product_id, finish_date=datetime.now())
+        success = service.mark_product_as_consumed(product_id, finish_date=finish_date)
         if not success:
             raise HTTPException(status_code=404, detail="Product not found or already consumed")
         return {"status": "success", "message": f"Product {product_id} marked as consumed"}

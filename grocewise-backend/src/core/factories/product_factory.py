@@ -65,7 +65,7 @@ class ProductFactory:
             nutrients = self._build_nutrients(raw_product.get("nutriments", {}))
 
             return Product(
-                db_id           =     None,
+                db_id         =     None,
                 barcode       =     barcode,
                 name          =     self._get_localized_name(raw_product),
                 brand         =     raw_product.get("brands", "unknown"),
