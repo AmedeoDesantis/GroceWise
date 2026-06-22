@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
 
@@ -7,8 +7,12 @@ class Nutrients(BaseModel):
     carbohydrates: Optional[float] = None
     proteins: Optional[float] = None
     fats: Optional[float] = None
-    
-    
+
+class ConsumptionEvent(BaseModel):
+    date: datetime
+    quantity: float
+
+
 class Product(BaseModel):
     db_id: Optional[str] = None
     barcode: str
@@ -20,3 +24,5 @@ class Product(BaseModel):
     nutrients: Optional[Nutrients] = None
     ingredients: Optional[list] = None
     weight: Optional[float] = None
+    remaining_weight: Optional[float] = None
+    consumptions: list[ConsumptionEvent] = Field(default_factory=list)

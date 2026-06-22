@@ -27,6 +27,11 @@ class MongoDB:
         coll = self._get_coll(collection_name)
         result = coll.update_one(query, {"$set": update_data})
         return result.modified_count > 0
+    
+    def update_one_push(self, collection_name: str, query: Dict, update_data: Dict) -> bool:
+        coll = self._get_coll(collection_name)
+        result = coll.update_one(query, {"$push": update_data})
+        return result.modified_count > 0
 
     def delete_one(self, collection_name: str, query: Dict) -> bool:
         coll = self._get_coll(collection_name)
