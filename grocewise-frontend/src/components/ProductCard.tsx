@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react'; // <-- Aggiunto useState
 import {
     View,
     Text,
     TouchableOpacity,
     StyleSheet,
+    TextInput, // <-- Aggiunto TextInput
 } from 'react-native';
 import { Product } from '../types';
 import {
@@ -16,7 +17,8 @@ import { colors, spacing, typography, shadows, borderRadius } from '../styles/co
 
 interface ProductCardProps {
     product: Product;
-    onConsume?: () => void;
+    // Modificato: adesso onConsume può accettare opzionalmente il peso consumato
+    onConsume?: (consumedWeight?: number | null) => void;
     onDelete?: () => void;
     canConsume?: boolean;
 }
@@ -27,6 +29,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     onDelete,
     canConsume = true,
 }) => {
+    // Stato locale per gestire l'input del testo per il peso da consumare
+    const [inputValue, setInputValue] = useState<string>('');
+
+    const handleConsumePress = () => {
+        if (!onConsume) return;
+
+        // Convertiamo la stringa in numero. Se è vuota o invalida, passiamo null
+        const parsedWeight = inputValue.trim() !== '' ? parseFloat(inputValue) : null;
+
+        // Passiamo il peso al componente padre (schermo o hook)
+        onConsume(parsedWeight);
+
+        // Puliamo l'input dopo il consumo
+        setInputValue('');
+    };
+
     return (
         <View style={styles.card}>
             <View style={styles.productInfo}>
@@ -39,8 +57,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 <Text style={styles.productDetail}>Barcode: {product.barcode}</Text>
                 <Text style={styles.productDetail}>Prezzo: {formatPrice(product.price)}</Text>
 
-                {product.weight && (
-                    <Text style={styles.productDetail}>Peso: {product.weight}g</Text>
+                {product.weight != null && (
+                    <Text style={styles.productDetail}>Peso totale: {product.weight}g</Text>
+                )}
+
+                {product.remaining_weight != null && !product.finish_date && (
+                    <Text style={styles.productDetail}>
+                        Residuo: {product.remaining_weight}g
+                    </Text>
                 )}
 
                 {product.buy_date && (
@@ -87,11 +111,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 )}
             </View>
 
+            {/* SEZIONE INPUT DI CONSUMO: Mostrata solo se il prodotto non è finito ed è consumabile */}
+            {canConsume && !product.finish_date && onConsume && (
+                <View style={styles.consumeInputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Peso cons. (g) - Opzionale"
+                        placeholderTextColor={colors.textSecondary}
+                        keyboardType="numeric"
+                        value={inputValue}
+                        onChangeText={setInputValue}
+                    />
+                </View>
+            )}
+
             <View style={styles.actions}>
                 {canConsume && !product.finish_date && onConsume && (
                     <TouchableOpacity
                         style={[styles.button, styles.consumeButton]}
-                        onPress={onConsume}
+                        onPress={handleConsumePress} // <-- Cambiato per chiamare la funzione locale
                     >
                         <Text style={styles.buttonText}>Consuma</Text>
                     </TouchableOpacity>
@@ -136,6 +174,20 @@ const styles = StyleSheet.create({
         paddingTop: spacing.sm,
         borderTopWidth: 1,
         borderTopColor: colors.border,
+    },
+    // Nuovi stili per il contenitore dell'input del peso
+    consumeInputContainer: {
+        marginBottom: spacing.sm,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: borderRadius.md,
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.md,
+        fontSize: 14,
+        color: colors.text,
+        backgroundColor: colors.white,
     },
     actions: {
         flexDirection: 'row',

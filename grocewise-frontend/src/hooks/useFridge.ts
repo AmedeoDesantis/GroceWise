@@ -40,10 +40,10 @@ export const useFridge = () => {
     );
 
     const consumeProduct = useCallback(
-        async (productId: string) => {
+        async (productId: string, consumedWeight?: number | null) => {
             setLoading(true);
             try {
-                await FridgeAPI.consumeProduct(productId);
+                await FridgeAPI.consumeProduct(productId, consumedWeight);
                 await loadProducts();
             } catch (error) {
                 console.error('Errore nel marcatura consumo:', error);

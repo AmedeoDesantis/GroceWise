@@ -5,6 +5,11 @@ export interface Nutrients {
     fats?: number;
 }
 
+export interface ConsumptionEvent {
+    date: string;
+    quantity: number;
+}
+
 export interface Product {
     db_id?: string;
     barcode: string;
@@ -16,6 +21,8 @@ export interface Product {
     nutrients?: Nutrients;
     ingredients?: string[];
     weight?: number;
+    remaining_weight?: number;
+    consumptions?: ConsumptionEvent[];
 }
 
 export interface AddProductResponse {
@@ -24,3 +31,23 @@ export interface AddProductResponse {
 }
 
 export type FilterType = 'all' | 'unconsumed';
+
+export interface DayStats {
+    calories: number;
+    carbohydrates: number;
+    proteins: number;
+    fats: number;
+    cost: number;
+}
+
+export interface AnalyticsResponse {
+    daily_analytics: Record<string, DayStats>;
+}
+
+export type MetricKey = keyof DayStats;
+
+export interface MetricConfig {
+    label: string;
+    suffix: string;
+    color: string;
+}

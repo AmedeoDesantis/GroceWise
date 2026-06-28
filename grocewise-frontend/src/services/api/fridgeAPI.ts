@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { Product, AddProductResponse } from '../../types';
 import { API_BASE_URL, API_TIMEOUT } from '../../constants/config';
+import { AnalyticsResponse, DayStats } from '../../types';
 
 class FridgeAPI {
     private api: AxiosInstance;
@@ -10,6 +11,18 @@ class FridgeAPI {
             baseURL: API_BASE_URL,
             timeout: API_TIMEOUT,
         });
+    }
+
+    async getAnalytics(startDate: string, endDate: string): Promise<Record<string, DayStats>> {
+        try {
+            const response = await this.api.get<AnalyticsResponse>('/analytics/consumption', {
+                params: { start_date: startDate, end_date: endDate },
+            });
+            return response.data.daily_analytics;
+        } catch (error) {
+            console.error('Errore nel recupero delle analitiche:', error);
+            throw error;
+        }
     }
 
     async getUnconsumedProducts(): Promise<Product[]> {
@@ -44,9 +57,13 @@ class FridgeAPI {
         }
     }
 
-    async consumeProduct(productId: string): Promise<void> {
+    async consumeProduct(productId: string, consumedWeight?: number | null): Promise<void> {
         try {
-            await this.api.post(`/fridge/products/${productId}/consume`);
+            await this.api.post(`/fridge/products/${productId}/consume`, null, {
+                params: {
+                    quantity: consumedWeight !== null ? consumedWeight : undefined,
+                }
+            });
         } catch (error) {
             console.error('Errore nel marcatura consumo:', error);
             throw error;

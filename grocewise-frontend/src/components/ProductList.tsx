@@ -13,7 +13,8 @@ import { colors, spacing } from '../styles/commonStyles';
 interface ProductListProps {
     products: Product[];
     loading: boolean;
-    onConsume?: (productId: string) => void;
+    // 1. MODIFICATO: Adesso la firma accetta anche il peso consumato (opzionale)
+    onConsume?: (productId: string, consumedWeight?: number | null) => void;
     onDelete?: (productId: string) => void;
 }
 
@@ -45,7 +46,8 @@ export const ProductList: React.FC<ProductListProps> = ({
                 <ProductCard
                     key={product.db_id}
                     product={product}
-                    onConsume={() => onConsume?.(product.db_id!)}
+                    // 2. MODIFICATO: Catturiamo il peso sputato fuori dalla ProductCard e lo passiamo a onConsume
+                    onConsume={(weight) => onConsume?.(product.db_id!, weight)}
                     onDelete={() => onDelete?.(product.db_id!)}
                 />
             ))}

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useRouter } from 'expo-router';
 import {
     View,
     Text,
@@ -6,6 +7,7 @@ import {
     StyleSheet,
     Alert,
     SafeAreaView,
+    TouchableOpacity
 } from 'react-native';
 import { useFridge } from '../../src/hooks/useFridge';
 import {
@@ -16,6 +18,7 @@ import {
 import { colors, spacing, typography } from '../../src/styles/commonStyles';
 
 export default function FridgeScreen() {
+    const router = useRouter();
     const {
         products,
         loading,
@@ -41,9 +44,9 @@ export default function FridgeScreen() {
         }
     };
 
-    const handleConsumeProduct = async (productId: string) => {
+    const handleConsumeProduct = async (productId: string, consumedWeight?: number | null) => {
         try {
-            await consumeProduct(productId);
+            await consumeProduct(productId, consumedWeight);
             Alert.alert('Successo', 'Prodotto marcato come consumato');
         } catch (error) {
             console.error('Errore nel marcatura consumo:', error);
@@ -90,6 +93,12 @@ export default function FridgeScreen() {
                     <View style={styles.titleContainer}>
                         <View style={styles.titleText}>
                             <Text style={styles.emoji}>📦</Text>
+                            <TouchableOpacity
+                                onPress={() => router.push('/analytics')}
+                                style={{ backgroundColor: '#007AFF', padding: 10, borderRadius: 8 }}
+                            >
+                                <Text style={{ color: '#fff', fontWeight: 'bold' }}>Vedi Statistiche 📈</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>

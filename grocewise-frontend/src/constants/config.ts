@@ -1,5 +1,5 @@
 // API Configuration
-export const API_BASE_URL = 'http://192.168.1.225:8000';
+export const API_BASE_URL = 'http://192.168.4.199:80';
 
 export const API_TIMEOUT = 10000; // 10 seconds
 

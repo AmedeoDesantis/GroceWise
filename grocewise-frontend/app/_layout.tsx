@@ -19,6 +19,13 @@ export default function RootLayout() {
           headerTitle: 'GroceWise',
         }}
       />
+      {/* 📊 AGGIUNTA DELLA SCHERMATA DELLE STATISTICHE */}
+      <Stack.Screen
+        name="analytics"
+        options={{
+          headerTitle: 'Statistiche Consumi',
+        }}
+      />
     </Stack>
   );
 }
