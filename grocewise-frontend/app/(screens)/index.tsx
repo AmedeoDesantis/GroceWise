@@ -35,18 +35,18 @@ export default function FridgeScreen() {
         loadProducts();
     }, [filterType]);
 
-    const handleAddProduct = async (barcode: string, price: number) => {
+    const handleAddProduct = async (barcode: string, price: number, buyDate?: string | null) => {
         try {
-            await addProduct(barcode, price);
+            await addProduct(barcode, price, buyDate);
             Alert.alert('Successo', 'Prodotto aggiunto');
         } catch (error) {
             console.error('Errore nell\'aggiunta del prodotto:', error);
         }
     };
 
-    const handleConsumeProduct = async (productId: string, consumedWeight?: number | null) => {
+    const handleConsumeProduct = async (productId: string, consumedWeight?: number | null, consumptionDate?: Date | null) => {
         try {
-            await consumeProduct(productId, consumedWeight);
+            await consumeProduct(productId, consumedWeight, consumptionDate);
             Alert.alert('Successo', 'Prodotto marcato come consumato');
         } catch (error) {
             console.error('Errore nel marcatura consumo:', error);

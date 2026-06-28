@@ -45,10 +45,10 @@ class FridgeAPI {
         }
     }
 
-    async addProduct(barcode: string, price: number = 0): Promise<string> {
+    async addProduct(barcode: string, price: number = 0, buy_date?: string | null): Promise<string> {
         try {
             const response = await this.api.post<AddProductResponse>('/fridge/products', null, {
-                params: { barcode, price },
+                params: { barcode, price, buy_date },
             });
             return response.data.inserted_id;
         } catch (error) {
@@ -57,15 +57,22 @@ class FridgeAPI {
         }
     }
 
-    async consumeProduct(productId: string, consumedWeight?: number | null): Promise<void> {
+    async consumeProduct(
+        productId: string,
+        consumedWeight?: number | null,
+        consumptionDate?: Date | null
+    ): Promise<void> {
         try {
+            const dateString = consumptionDate ? consumptionDate.toISOString() : undefined;
+
             await this.api.post(`/fridge/products/${productId}/consume`, null, {
                 params: {
                     quantity: consumedWeight !== null ? consumedWeight : undefined,
+                    consumed_at: dateString
                 }
             });
         } catch (error) {
-            console.error('Errore nel marcatura consumo:', error);
+            console.error('Errore nella chiamata Axios di consumo:', error);
             throw error;
         }
     }

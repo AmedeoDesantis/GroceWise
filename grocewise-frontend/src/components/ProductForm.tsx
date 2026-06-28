@@ -11,11 +11,12 @@ import {
 import { colors, spacing, typography, borderRadius } from '../styles/commonStyles';
 import { BARCODE_MIN_LENGTH, BARCODE_MAX_LENGTH, DEFAULT_PRICE } from '../constants/config';
 
-// Rimaniano solo con la libreria nativa di Expo
+// Importa il DateTimePicker
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
 interface ProductFormProps {
-    onSubmit: (barcode: string, price: number) => Promise<void>;
+    onSubmit: (barcode: string, price: number, buyDate: Date) => Promise<void>;
     isLoading?: boolean;
 }
 
@@ -27,7 +28,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     const [price, setPrice] = useState('0');
     const [scanning, setScanning] = useState(false);
 
-    // Gestione dei permessi hardware della fotocamera
+    const [buyDate, setBuyDate] = useState<Date>(new Date()); // Tiene traccia della data scelta
+    const [showDatePicker, setShowDatePicker] = useState(false); // Controlla la visibilità del selettore
+
     const [permission, requestPermission] = useCameraPermissions();
 
     const handleSubmit = async () => {
@@ -37,9 +40,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         }
 
         try {
-            await onSubmit(barcode, parseFloat(price) || DEFAULT_PRICE);
+            await onSubmit(barcode, parseFloat(price) || DEFAULT_PRICE, buyDate);
             setBarcode('');
             setPrice('0');
+            setBuyDate(new Date()); // Reset alla data odierna
         } catch (error: any) {
             Alert.alert(
                 'Errore',
@@ -48,22 +52,25 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         }
     };
 
-    // Funzione che gestisce l'evento di lettura del codice a barre
     const handleBarcodeScanned = ({ data }: { data: string }) => {
         if (data) {
-            setBarcode(data); // Inserisce il codice estratto nel campo di testo
-            setScanning(false); // Chiude la fotocamera e torna al form
+            setBarcode(data);
+            setScanning(false);
         }
     };
 
-    // GESTIONE STATI DELLA FOTOCAMERA
+    const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+        setShowDatePicker(false);
+        if (selectedDate) {
+            setBuyDate(selectedDate);
+        }
+    };
+
     if (scanning) {
-        // 1. Se i permessi non sono ancora stati richiesti
         if (!permission) {
             return <View style={styles.centerContainer}><Text>Richiesta permessi in corso...</Text></View>;
         }
 
-        // 2. Se l'utente ha rifiutato i permessi
         if (!permission.granted) {
             return (
                 <View style={styles.container}>
@@ -81,17 +88,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             );
         }
 
-        // 3. Mostra la fotocamera attiva se i permessi sono validi
         return (
             <View style={styles.cameraContainer}>
                 <CameraView
                     style={StyleSheet.absoluteFillObject}
                     barcodeScannerSettings={{
-                        barcodeTypes: ['ean13', 'ean8', 'upc_a'], // Specifichiamo i formati industriali dei cibi
+                        barcodeTypes: ['ean13', 'ean8', 'upc_a'],
                     }}
                     onBarcodeScanned={handleBarcodeScanned}
                 />
-                {/* Pulsante di chiusura sopra la fotocamera */}
                 <TouchableOpacity
                     style={styles.closeCameraButton}
                     onPress={() => setScanning(false)}
@@ -102,12 +107,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         );
     }
 
-    // FORM STANDARD DI INSERIMENTO
     return (
         <View style={styles.container}>
             <Text style={styles.label}>Aggiungi Prodotto</Text>
 
-            {/* Bottone fotocamera */}
             <TouchableOpacity
                 style={[styles.button, styles.cameraButton]}
                 onPress={() => setScanning(true)}
@@ -125,6 +128,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 maxLength={BARCODE_MAX_LENGTH}
                 keyboardType="number-pad"
             />
+
             <TextInput
                 style={styles.input}
                 placeholder="Prezzo (opzionale)"
@@ -133,8 +137,32 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 keyboardType="decimal-pad"
                 editable={!isLoading}
             />
+
+            {/* SEZIONE COMPONENTE SELETTORE DATA */}
+            <Text style={styles.fieldLabel}>Data di acquisto:</Text>
             <TouchableOpacity
-                style={[styles.button, isLoading && styles.buttonDisabled]}
+                style={styles.datePickerButton}
+                onPress={() => setShowDatePicker(true)}
+                disabled={isLoading}
+            >
+                <Text style={styles.datePickerButtonText}>
+                    📅 {buyDate.toLocaleDateString('it-IT')}
+                </Text>
+            </TouchableOpacity>
+
+            {/* Mostra il DatePicker nativo solo se attivato */}
+            {showDatePicker && (
+                <DateTimePicker
+                    value={buyDate}
+                    mode="date"
+                    display="default" // Mostra il layout migliore in base alla piattaforma (iOS/Android)
+                    maximumDate={new Date()} // Impedisce di selezionare date future
+                    onChange={onDateChange}
+                />
+            )}
+
+            <TouchableOpacity
+                style={[styles.button, styles.submitButton, isLoading && styles.buttonDisabled]}
                 onPress={handleSubmit}
                 disabled={isLoading}
             >
@@ -162,7 +190,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     cameraContainer: {
-        height: 300, // Diamogli un'altezza fissa nel form per non spaccare il layout
+        height: 300,
         borderRadius: borderRadius.md,
         overflow: 'hidden',
         marginBottom: spacing.md,
@@ -182,6 +210,12 @@ const styles = StyleSheet.create({
         marginBottom: spacing.md,
         color: colors.text,
     },
+    fieldLabel: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: colors.textSecondary,
+        marginBottom: spacing.xs,
+    },
     input: {
         borderWidth: 1,
         borderColor: colors.border,
@@ -191,15 +225,31 @@ const styles = StyleSheet.create({
         fontSize: 14,
         backgroundColor: colors.lightBg,
     },
+    // Nuovi stili per il bottone del DatePicker
+    datePickerButton: {
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: borderRadius.md,
+        padding: spacing.md,
+        marginBottom: spacing.xl, // Lascia spazio prima del tasto invio
+        backgroundColor: colors.lightBg,
+        justifyContent: 'center',
+    },
+    datePickerButtonText: {
+        fontSize: 14,
+        color: colors.text,
+    },
     button: {
-        backgroundColor: colors.success,
         paddingVertical: spacing.md,
         paddingHorizontal: spacing.md,
         borderRadius: borderRadius.md,
         alignItems: 'center',
     },
+    submitButton: {
+        backgroundColor: colors.success,
+    },
     cameraButton: {
-        backgroundColor: '#007aff', // Colore azzurro per differenziarlo dal tasto conferma
+        backgroundColor: '#007aff',
         marginBottom: spacing.md,
     },
     buttonDisabled: {

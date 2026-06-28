@@ -41,15 +41,12 @@ def add_product(
 @router.post("/products/{product_id}/consume", status_code=200)
 def consume_product(
     product_id: str = Path(..., min_length=24, max_length=24),
-    finish_date: datetime = Query(default_factory=datetime.now),
+    consumed_at: datetime = Query(default_factory=datetime.now),
     quantity: float | None = Query(None, gt=0, description="Quantità in grammi; se omessa consuma tutto il residuo"),
     service: FridgeService = Depends(AppContainer.get_fridge_service),
 ):
     try:
-        if quantity is not None:
-            success = service.partially_consume_product(product_id, quantity, consumed_at=finish_date)
-        else:
-            success = service.mark_product_as_consumed(product_id, finish_date=finish_date)
+        success = service.partially_consume_product(product_id, quantity, consumed_at=consumed_at)
 
         if not success:
             raise HTTPException(status_code=404, detail="Product not found or already consumed")

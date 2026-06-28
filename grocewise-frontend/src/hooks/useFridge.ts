@@ -24,10 +24,10 @@ export const useFridge = () => {
     }, [filterType]);
 
     const addProduct = useCallback(
-        async (barcode: string, price: number = 0) => {
+        async (barcode: string, price: number = 0, buy_date?: string | null) => {
             setLoading(true);
             try {
-                await FridgeAPI.addProduct(barcode, price);
+                await FridgeAPI.addProduct(barcode, price, buy_date);
                 await loadProducts();
             } catch (error) {
                 console.error('Errore nell\'aggiunta del prodotto:', error);
@@ -40,10 +40,10 @@ export const useFridge = () => {
     );
 
     const consumeProduct = useCallback(
-        async (productId: string, consumedWeight?: number | null) => {
+        async (productId: string, consumedWeight?: number | null, consumptionDate?: Date | null) => {
             setLoading(true);
             try {
-                await FridgeAPI.consumeProduct(productId, consumedWeight);
+                await FridgeAPI.consumeProduct(productId, consumedWeight, consumptionDate);
                 await loadProducts();
             } catch (error) {
                 console.error('Errore nel marcatura consumo:', error);
