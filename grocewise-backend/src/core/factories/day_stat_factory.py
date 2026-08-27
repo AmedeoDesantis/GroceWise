@@ -7,7 +7,7 @@ class DayStatsFactory:
     def build_from_product(product: Product) -> DayStats:
         """Distribuzione uniforme su buy_date → finish_date (logica legacy)."""
         time_span = (product.finish_date - product.buy_date).days + 1
-        hundred_grams_units = (product.weight or 0) / 100
+        hundred_grams_units = (product.quantity or 0) / 100
 
         nutrients = product.nutrients
         if not nutrients:
@@ -24,7 +24,7 @@ class DayStatsFactory:
     @staticmethod
     def build_from_consumption(product: Product, quantity: float) -> DayStats:
         """Statistiche proporzionali a un singolo evento di consumo."""
-        weight_ratio = quantity / product.weight if product.weight and product.weight > 0 else 0.0
+        weight_ratio = quantity / product.quantity if product.quantity and product.quantity > 0 else 0.0
         hundred_grams_units = quantity / 100
 
         nutrients = product.nutrients

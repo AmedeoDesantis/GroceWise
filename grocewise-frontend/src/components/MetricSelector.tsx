@@ -6,9 +6,9 @@ import {
     StyleSheet,
     ScrollView,
 } from 'react-native';
-import { spacing } from '../styles/commonStyles';
 import { METRICS_CONFIG } from '../constants/analytics';
 import { MetricKey } from '../types';
+import { colors, spacing, borderRadius, typography } from '../styles/commonStyles';
 
 interface MetricSelectorProps {
     activeMetric: MetricKey;
@@ -53,7 +53,8 @@ export const MetricSelector: React.FC<MetricSelectorProps> = ({
     );
 };
 
-const styles = StyleSheet.create({
+
+export const styles = StyleSheet.create({
     container: {
         height: 50,
         marginBottom: spacing.lg,
@@ -63,19 +64,19 @@ const styles = StyleSheet.create({
         paddingHorizontal: spacing.sm,
     },
     button: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 20,
-        backgroundColor: '#2c2c2e',
+        paddingHorizontal: spacing.lg,    // Rimosso 16
+        paddingVertical: spacing.sm,      // Rimosso 8
+        borderRadius: borderRadius.xxl,   // Rimosso 20
+        backgroundColor: colors.surfaceDark, // Rimosso '#2c2c2e'
         marginRight: spacing.sm,
     },
     buttonText: {
-        color: '#aaa',
+        ...typography.body,               // Applica fontSize 14
+        color: colors.textMuted,          // Rimosso '#aaa'
         fontWeight: '600',
-        fontSize: 14,
     },
     buttonTextSelected: {
-        color: '#fff',
-        fontWeight: 'bold',
+        color: colors.white,              // Rimosso '#fff'
+        fontWeight: 'bold',               // Volendo puoi usare typography.title.fontWeight
     },
 });

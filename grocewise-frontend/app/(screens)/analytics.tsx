@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { useAnalytics } from '../../src/hooks/useAnalytics';
 import { MetricSelector, ConsumptionChart } from '../../src/components';
-import { colors, spacing } from '../../src/styles/commonStyles';
+import { colors, spacing, typography } from '../../src/styles/commonStyles';
 import {
     ANALYTICS_DEFAULT_START_DATE,
     ANALYTICS_DEFAULT_END_DATE,
@@ -40,39 +40,43 @@ export default function AnalyticsScreen() {
     const hasData = rawData && dataset.length > 0;
 
     return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>Analisi Consumi Alimentari</Text>
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.container}>
+                <Text style={styles.title}>Analisi Consumi Alimentari</Text>
 
-            <MetricSelector
-                activeMetric={activeMetric}
-                onMetricChange={setActiveMetric}
-            />
-
-            {hasData ? (
-                <ConsumptionChart
-                    labels={labels}
-                    dataset={dataset}
-                    metric={activeMetric}
+                <MetricSelector
+                    activeMetric={activeMetric}
+                    onMetricChange={setActiveMetric}
                 />
-            ) : (
-                <Text style={styles.emptyText}>
-                    Nessun dato registrato nel periodo selezionato.
-                </Text>
-            )}
+
+                {hasData ? (
+                    <ConsumptionChart
+                        labels={labels}
+                        dataset={dataset}
+                        metric={activeMetric}
+                    />
+                ) : (
+                    <Text style={styles.emptyText}>
+                        Nessun dato registrato nel periodo selezionato.
+                    </Text>
+                )}
+            </View>
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    safeArea: {
         flex: 1,
         backgroundColor: colors.background,
+    },
+    container: {
+        flex: 1,
         padding: spacing.lg,
     },
     title: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#fff',
+        ...typography.title,
+        color: colors.text, // Corretto! Prima era #fff e non si sarebbe visto sul panna
         marginVertical: spacing.md,
         textAlign: 'center',
     },
@@ -83,7 +87,8 @@ const styles = StyleSheet.create({
         backgroundColor: colors.background,
     },
     emptyText: {
-        color: '#999',
+        ...typography.body,
+        color: colors.textSecondary, // Corretto! Prima era #999
         textAlign: 'center',
         marginTop: spacing.xl,
     },

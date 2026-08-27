@@ -15,7 +15,7 @@ import {
     ProductForm,
     ProductList
 } from '../../src/components';
-import { colors, spacing, typography } from '../../src/styles/commonStyles';
+import { colors, spacing, borderRadius, typography } from '../../src/styles/commonStyles';
 
 export default function FridgeScreen() {
     const router = useRouter();
@@ -34,6 +34,7 @@ export default function FridgeScreen() {
     useEffect(() => {
         loadProducts();
     }, [filterType]);
+
 
     const handleAddProduct = async (barcode: string, price: number, buyDate?: string | null) => {
         try {
@@ -90,17 +91,12 @@ export default function FridgeScreen() {
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.header}>
-                    <View style={styles.titleContainer}>
-                        <View style={styles.titleText}>
-                            <Text style={styles.emoji}>📦</Text>
-                            <TouchableOpacity
-                                onPress={() => router.push('/analytics')}
-                                style={{ backgroundColor: '#007AFF', padding: 10, borderRadius: 8 }}
-                            >
-                                <Text style={{ color: '#fff', fontWeight: 'bold' }}>Vedi Statistiche 📈</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+                    <TouchableOpacity
+                        onPress={() => router.push('/analytics')}
+                        style={styles.statsButton}
+                    >
+                        <Text style={styles.statsButtonText}>Vedi Statistiche</Text>
+                    </TouchableOpacity>
                 </View>
 
                 <ProductForm onSubmit={handleAddProduct} isLoading={loading} />
@@ -119,13 +115,7 @@ export default function FridgeScreen() {
 
                 {!loading && products.length > 0 && (
                     <View style={styles.deleteAllButtonContainer}>
-                        <View
-                            style={{
-                                paddingBottom: spacing.lg,
-                            }}
-                        >
-                            {/* Spacer per il bottone */}
-                        </View>
+                        <View style={{ paddingBottom: spacing.lg }} />
                     </View>
                 )}
             </ScrollView>
@@ -150,18 +140,18 @@ const styles = StyleSheet.create({
         marginBottom: spacing.xl,
         alignItems: 'center',
     },
-    titleContainer: {
-        alignItems: 'center',
+    statsButton: {
+        backgroundColor: colors.lightBg, // Sfondo grigio caldo
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.lg,
+        borderRadius: borderRadius.md,
+        borderWidth: 1,
+        borderColor: colors.border,
     },
-    titleText: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: spacing.md,
-    },
-    emoji: {
-        fontSize: 32,
-        marginRight: spacing.md,
+    statsButtonText: {
+        ...typography.body,
+        color: colors.text,
+        fontWeight: '600',
     },
     deleteAllButtonContainer: {
         marginTop: spacing.lg,

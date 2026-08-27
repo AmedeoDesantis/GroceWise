@@ -12,11 +12,12 @@ import { Product } from '../types';
 import {
     formatDate,
     formatPrice,
-    formatIngredients,
+    // formatIngredients, // Decommenta se ti serve
     formatNutrients,
     formatQuantity,
 } from '../utils/formatting';
-import { colors, spacing, shadows, borderRadius } from '../styles/commonStyles';
+// IMPORTANTE: Assicurati di importare typography!
+import { colors, spacing, shadows, borderRadius, typography } from '../styles/commonStyles';
 
 interface ProductCardProps {
     product: Product;
@@ -33,15 +34,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
     const [inputValue, setInputValue] = useState<string>('');
     const [consumptionDate, setConsumptionDate] = useState<Date>(new Date());
-    const [showPicker, setShowPicker] = useState<boolean>(false); // Gestisce la visibilità del picker nativo
+    const [showPicker, setShowPicker] = useState<boolean>(false);
 
-    // Gestisce il cambio di data del DatePicker nativo
     const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
+        // Su Android il picker modale si chiude automaticamente, quindi aggiorniamo lo stato
         if (Platform.OS === 'android') {
             setShowPicker(false);
         }
 
-        if (selectedDate) {
+        // Aggiorniamo la data SOLO se l'utente ha premuto "Conferma/Imposta" (ignora i tap fuori per annullare)
+        if (event.type === 'set' && selectedDate) {
             setConsumptionDate(selectedDate);
         }
     };
@@ -50,7 +52,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         if (!onConsume) return;
 
         const parsedWeight = inputValue.trim() !== '' ? parseFloat(inputValue) : null;
-
         onConsume(parsedWeight, consumptionDate);
 
         setInputValue('');
@@ -62,7 +63,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <View style={styles.card}>
             {/* --- INFO PRODOTTO --- */}
             <View style={styles.productInfo}>
-
                 <Text style={styles.productName}>{product.name}</Text>
 
                 {product.brand && <Text style={styles.productDetail}>Marca: {product.brand}</Text>}
@@ -90,17 +90,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 <View style={styles.consumeInputContainer}>
                     <TextInput
                         style={styles.input}
-                        placeholder="Peso cons. (g) - Opzionale"
+                        placeholder="Peso cons. (g o ml) - Opzionale"
                         placeholderTextColor={colors.textSecondary}
                         keyboardType="numeric"
                         value={inputValue}
                         onChangeText={setInputValue}
                     />
 
-                    {/* Bottone per aprire il DatePicker nativo */}
+                    {/* IL FIX È QUI: Usiamo !showPicker per farlo funzionare come un "Toggle" (Apri/Chiudi) */}
                     <TouchableOpacity
                         style={styles.datePickerButton}
-                        onPress={() => setShowPicker(true)}
+                        onPress={() => setShowPicker(!showPicker)}
                     >
                         <Text style={styles.datePickerLabel}>Data di consumo:</Text>
                         <Text style={styles.datePickerValue}>
@@ -108,12 +108,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                         </Text>
                     </TouchableOpacity>
 
-                    {/* Il DatePicker nativo si attiva solo se showPicker è true */}
                     {showPicker && (
                         <DateTimePicker
                             value={consumptionDate}
                             mode="date"
-                            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                            // Su iOS 'inline' è il calendario moderno compatto. Su Android 'default' usa il modale di sistema.
+                            display={Platform.OS === 'ios' ? 'inline' : 'default'}
                             onChange={onChangeDate}
                         />
                     )}
@@ -137,15 +137,46 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     );
 };
 
+// --- STILI EDITORIALI & FLAT DESIGN ---
 const styles = StyleSheet.create({
-    card: { backgroundColor: colors.white, padding: spacing.lg, borderRadius: borderRadius.md, marginBottom: spacing.md, ...shadows.card },
+    card: {
+        backgroundColor: colors.white,
+        padding: spacing.lg,
+        borderRadius: borderRadius.lg, // Usiamo lg (8px) per mantenere lo stile squadrato/carta
+        marginBottom: spacing.md,
+        ...shadows.card
+    },
     productInfo: { marginBottom: spacing.md },
-    productName: { fontSize: 16, fontWeight: '600', color: colors.text, marginBottom: spacing.sm },
-    productDetail: { fontSize: 13, color: colors.textSecondary, marginBottom: spacing.xs },
-    nutrientsSection: { marginTop: spacing.sm, paddingTop: spacing.sm, borderTopWidth: 1, borderTopColor: colors.border },
-    consumeInputContainer: { marginBottom: spacing.sm, gap: spacing.sm },
-    input: { borderWidth: 1, borderColor: colors.border, borderRadius: borderRadius.md, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, fontSize: 14, color: colors.text, backgroundColor: colors.white },
-
+    productName: {
+        ...typography.subtitle,
+        color: colors.text,
+        marginBottom: spacing.sm
+    },
+    productDetail: {
+        ...typography.small,
+        color: colors.textSecondary,
+        marginBottom: spacing.xs
+    },
+    nutrientsSection: {
+        marginTop: spacing.sm,
+        paddingTop: spacing.sm,
+        borderTopWidth: 1,
+        borderTopColor: colors.border
+    },
+    consumeInputContainer: {
+        marginBottom: spacing.sm,
+        gap: spacing.sm
+    },
+    input: {
+        ...typography.body,
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: borderRadius.md,
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.md,
+        color: colors.text,
+        backgroundColor: colors.white
+    },
     datePickerButton: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -158,12 +189,31 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         height: 44,
     },
-    datePickerLabel: { fontSize: 14, color: colors.textSecondary },
-    datePickerValue: { fontSize: 14, color: colors.text, fontWeight: '500' },
-
-    actions: { flexDirection: 'row', gap: spacing.sm },
-    button: { flex: 1, paddingVertical: spacing.md, paddingHorizontal: spacing.sm, borderRadius: borderRadius.md, alignItems: 'center' },
+    datePickerLabel: {
+        ...typography.body,
+        color: colors.textSecondary
+    },
+    datePickerValue: {
+        ...typography.body,
+        color: colors.text,
+        fontWeight: '500'
+    },
+    actions: {
+        flexDirection: 'row',
+        gap: spacing.sm
+    },
+    button: {
+        flex: 1,
+        paddingVertical: spacing.md,
+        paddingHorizontal: spacing.sm,
+        borderRadius: borderRadius.md,
+        alignItems: 'center'
+    },
     consumeButton: { backgroundColor: colors.warning },
     deleteButton: { backgroundColor: colors.danger },
-    buttonText: { color: colors.white, fontWeight: '600', fontSize: 14 },
+    buttonText: {
+        ...typography.body,
+        color: colors.white,
+        fontWeight: '600'
+    },
 });

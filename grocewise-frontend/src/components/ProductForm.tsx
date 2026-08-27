@@ -8,7 +8,8 @@ import {
     Alert,
     Button,
 } from 'react-native';
-import { colors, spacing, typography, borderRadius } from '../styles/commonStyles';
+import { colors, spacing, borderRadius, shadows, typography } from '../styles/commonStyles';
+
 import { BARCODE_MIN_LENGTH, BARCODE_MAX_LENGTH, DEFAULT_PRICE } from '../constants/config';
 
 // Importa il DateTimePicker
@@ -101,7 +102,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     style={styles.closeCameraButton}
                     onPress={() => setScanning(false)}
                 >
-                    <Text style={styles.buttonText}>❌ Chiudi Camera</Text>
+                    <Text style={styles.buttonText}>Chiudi Camera</Text>
                 </TouchableOpacity>
             </View>
         );
@@ -116,7 +117,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 onPress={() => setScanning(true)}
                 disabled={isLoading}
             >
-                <Text style={styles.buttonText}>📷 Leggi Barcode</Text>
+                <Text style={styles.buttonText}>Leggi Barcode</Text>
             </TouchableOpacity>
 
             <TextInput
@@ -146,7 +147,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 disabled={isLoading}
             >
                 <Text style={styles.datePickerButtonText}>
-                    📅 {buyDate.toLocaleDateString('it-IT')}
+                    {buyDate.toLocaleDateString('it-IT')}
                 </Text>
             </TouchableOpacity>
 
@@ -171,18 +172,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         </View>
     );
 };
-
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.white,
         padding: spacing.lg,
         borderRadius: borderRadius.md,
         marginBottom: spacing.xl,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        ...shadows.card, // Ripulisce tutte le 5 righe di shadow scritte a mano!
     },
     centerContainer: {
         flex: 1,
@@ -200,43 +196,42 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: spacing.md,
         alignSelf: 'center',
-        backgroundColor: 'rgba(0,0,0,0.7)',
+        backgroundColor: colors.overlay, // Rimosso 'rgba(0,0,0,0.7)'
         padding: spacing.sm,
         borderRadius: borderRadius.md,
     },
     label: {
-        fontSize: 16,
-        fontWeight: '600',
+        ...typography.subtitle, // Applica fontSize 16 e fontWeight 600
         marginBottom: spacing.md,
         color: colors.text,
     },
     fieldLabel: {
-        fontSize: 14,
-        fontWeight: '500',
+        ...typography.body,
+        fontWeight: '500', // Sovrascrive il peso di body
         color: colors.textSecondary,
         marginBottom: spacing.xs,
     },
     input: {
+        ...typography.body, // Applica fontSize 14
         borderWidth: 1,
         borderColor: colors.border,
         borderRadius: borderRadius.md,
         padding: spacing.md,
         marginBottom: spacing.md,
-        fontSize: 14,
         backgroundColor: colors.lightBg,
+        color: colors.text, // Aggiunto per coerenza
     },
-    // Nuovi stili per il bottone del DatePicker
     datePickerButton: {
         borderWidth: 1,
         borderColor: colors.border,
         borderRadius: borderRadius.md,
         padding: spacing.md,
-        marginBottom: spacing.xl, // Lascia spazio prima del tasto invio
+        marginBottom: spacing.xl,
         backgroundColor: colors.lightBg,
         justifyContent: 'center',
     },
     datePickerButtonText: {
-        fontSize: 14,
+        ...typography.body, // Applica fontSize 14
         color: colors.text,
     },
     button: {
@@ -249,15 +244,15 @@ const styles = StyleSheet.create({
         backgroundColor: colors.success,
     },
     cameraButton: {
-        backgroundColor: '#007aff',
+        backgroundColor: colors.primary, // Rimosso '#007aff'
         marginBottom: spacing.md,
     },
     buttonDisabled: {
         opacity: 0.6,
     },
     buttonText: {
+        ...typography.body,
         color: colors.white,
-        fontWeight: '600',
-        fontSize: 14,
+        fontWeight: '600', // Sovrascrive il peso
     },
 });

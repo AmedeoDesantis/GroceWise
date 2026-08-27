@@ -50,7 +50,8 @@ class ProductFactory:
             return 0.0
         
         #caso versione sgocciolata / non sgocciolata
-        return re.sub(r'[\\/].*', '', quantity).strip()
+        return float(re.sub(r'[\\/].*', '', str(quantity)).strip())
+        
         
 
     def _get_ingredients(self, raw_product: dict) -> Optional[list]:

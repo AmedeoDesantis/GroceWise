@@ -1,16 +1,18 @@
 import { Stack } from 'expo-router';
+import { colors } from '../src/styles/commonStyles'; // Assicurati che il percorso sia corretto
 
 export default function RootLayout() {
   return (
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#007AFF',
+          backgroundColor: colors.white,
         },
-        headerTintColor: '#fff',
+        headerTintColor: colors.text,
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: '600',
         },
+        headerShadowVisible: false, // FONDAMENTALE: Rimuove l'ombra/linea sotto l'header per il flat design
       }}
     >
       <Stack.Screen
@@ -19,7 +21,6 @@ export default function RootLayout() {
           headerTitle: 'GroceWise',
         }}
       />
-      {/* 📊 AGGIUNTA DELLA SCHERMATA DELLE STATISTICHE */}
       <Stack.Screen
         name="analytics"
         options={{

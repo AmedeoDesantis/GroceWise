@@ -4,6 +4,7 @@ import { LineChart } from 'react-native-chart-kit';
 import { colors, spacing } from '../styles/commonStyles';
 import { METRICS_CONFIG } from '../constants/analytics';
 import { MetricKey } from '../types';
+import { typography, borderRadius } from '../styles/commonStyles';
 
 interface ConsumptionChartProps {
     labels: string[];
@@ -50,17 +51,17 @@ export const ConsumptionChart: React.FC<ConsumptionChartProps> = ({
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#1c1c1e',
-        borderRadius: 16,
+        backgroundColor: colors.darkBg, // Rimosso #1c1c1e
+        borderRadius: borderRadius.lg,  // Rimosso 16
         padding: spacing.md,
         alignItems: 'center',
     },
     title: {
-        fontSize: 16,
-        fontWeight: '700',
+        ...typography.subtitle, // Spalma fontSize e fontWeight automaticamente!
+        color: colors.white,    // Assumendo che su sfondo scuro il testo sia bianco
         marginBottom: spacing.sm,
     },
     chart: {
-        borderRadius: 16,
+        borderRadius: borderRadius.lg, // Rimosso 16
     },
 });

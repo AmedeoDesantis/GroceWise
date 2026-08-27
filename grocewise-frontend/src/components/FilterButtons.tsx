@@ -76,9 +76,9 @@ const styles = StyleSheet.create({
         borderColor: colors.primary,
     },
     buttonText: {
+        ...typography.body, // Sostituisce fontSize 14
         textAlign: 'center',
-        fontSize: 14,
-        fontWeight: '500',
+        fontWeight: '500', // Sovrascrive il fontWeight di default se serve
         color: colors.textSecondary,
     },
     buttonTextActive: {

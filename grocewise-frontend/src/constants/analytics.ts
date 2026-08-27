@@ -8,5 +8,5 @@ export const METRICS_CONFIG: Record<MetricKey, MetricConfig> = {
     cost: { label: 'Spesa', suffix: ' €', color: '#34AADC' },
 };
 
-export const ANALYTICS_DEFAULT_START_DATE = '2026-06-01';
-export const ANALYTICS_DEFAULT_END_DATE = '2026-06-22';
+export const ANALYTICS_DEFAULT_START_DATE = '2026-08-25';
+export const ANALYTICS_DEFAULT_END_DATE = '2026-08-28';

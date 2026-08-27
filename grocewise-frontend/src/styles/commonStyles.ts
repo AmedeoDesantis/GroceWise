@@ -1,17 +1,27 @@
 import { StyleSheet } from 'react-native';
 
 export const colors = {
-    primary: '#007AFF',
-    success: '#34C759',
-    warning: '#FF9500',
-    danger: '#FF3B30',
-    background: '#f5f5f5',
-    white: '#fff',
-    text: '#333',
-    textSecondary: '#666',
-    textLight: '#999',
-    border: '#ddd',
-    lightBg: '#fafafa',
+    primary: '#B66D52',
+    success: '#6B8E6B',
+    warning: '#D4A35C',
+    danger: '#B55042',
+    error: '#B55042',
+
+    background: '#F9F8F6',
+    white: '#FFFFFF',
+    lightBg: '#F4F2EE',       // Reso ancora un filo più caldo e integrato
+
+    text: '#36312D',
+    textSecondary: '#7A7571',
+    textLight: '#ABA5A0',
+
+    // Bordo reso ancora più delicato, quasi impercettibile
+    border: '#EAE6E1',
+
+    surfaceDark: '#45413E',
+    textMuted: '#9E9893',
+    darkBg: '#2A2725',
+    overlay: 'rgba(42, 39, 37, 0.6)',
 };
 
 export const spacing = {
@@ -23,19 +33,30 @@ export const spacing = {
     xxl: 32,
 };
 
+// --- RAGGI AFFILATI (Stile Editoriale) ---
 export const borderRadius = {
-    sm: 4,
-    md: 6,
-    lg: 8,
+    sm: 2,       // Micro-smussatura (invece di 4)
+    md: 4,       // Standard per input e bottoni (invece di 8). Molto strutturato.
+    lg: 8,       // Per le Card e i Grafici (invece di 16). Tagliente ed elegante.
+    xl: 12,
+    xxl: 16,
+    pill: 999,
 };
 
 export const shadows = StyleSheet.create({
     card: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        // Via le ombre! Nel minimalismo puro usiamo il Flat Design.
+        shadowColor: 'transparent',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        elevation: 0, // Toglie l'ombra anche su Android
+
+        // Invece dell'ombra, applichiamo un bordo chirurgico e leggerissimo
+        // Siccome fai lo "spread" (...shadows.card) nei componenti, questo
+        // bordo si applicherà magicamente a tutte le card senza toccare altro codice.
+        borderWidth: 1,
+        borderColor: '#F0EBE6',
     },
 });
 
@@ -43,6 +64,7 @@ export const typography = {
     title: {
         fontSize: 28,
         fontWeight: 'bold' as const,
+        letterSpacing: -0.5,
     },
     subtitle: {
         fontSize: 16,
