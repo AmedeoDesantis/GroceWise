@@ -23,6 +23,7 @@ class Product(BaseModel):
     finish_date: Optional[datetime] = None
     nutrients: Optional[Nutrients] = None
     ingredients: Optional[list] = None
-    weight: Optional[float] = None
-    remaining_weight: Optional[float] = None
+    quantity: Optional[float] = None
+    unit: Optional[str] = None
+    remaining_quantity: Optional[float] = None
     consumptions: list[ConsumptionEvent] = Field(default_factory=list)

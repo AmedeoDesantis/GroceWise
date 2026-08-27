@@ -22,8 +22,9 @@ class ProductRepository:
             "price": product.price,
             "buy_date": product.buy_date,
             "finish_date": product.finish_date,
-            "weight": product.weight,
-            "remaining_weight": product.remaining_weight,
+            "quantity": product.quantity,
+            "unit": product.unit,
+            "remaining_quantity": product.remaining_quantity,
             "consumptions": [
                 {"date": event.date, "quantity": event.quantity}
                 for event in product.consumptions
@@ -64,21 +65,21 @@ class ProductRepository:
         raw_products = self.mongo.find(self.COLLECTION)
         return [self.factory.build_from_dict(raw) for raw in raw_products]
 
-    def _remaining_weight(self, product: Product) -> float:
-        if product.remaining_weight is not None:
-            return product.remaining_weight
-        return product.weight or 0.0
+    def _remaining_quantity(self, product: Product) -> float:
+        if product.remaining_quantity is not None:
+            return product.remaining_quantity
+        return product.quantity or 0.0
 
     def add_consumption(
         self,
         product_id: str,
         event: ConsumptionEvent,
-        remaining_weight: float,
+        remaining_quantity: float,
         finish_date: datetime | None = None,
     ) -> bool:
         query = {"_id": ObjectId(product_id)}
         consumption_event = {"date": event.date, "quantity": event.quantity}
-        update_fields = {"remaining_weight": remaining_weight}
+        update_fields = {"remaining_quantity": remaining_quantity}
         if finish_date is not None:
             update_fields["finish_date"] = finish_date
             
@@ -92,7 +93,7 @@ class ProductRepository:
         if not product or product.finish_date is not None:
             return False
         
-        remaining = self._remaining_weight(product)
+        remaining = self._remaining_quantity(product)
         
         if quantity is not None:
             if quantity <= 0 or quantity > remaining:
@@ -101,15 +102,15 @@ class ProductRepository:
             quantity = remaining
             
         consumption = ConsumptionEvent(date=consumed_at, quantity=quantity)
-        remaining_weight = int(remaining - quantity)
+        remaining_quantity = int(remaining - quantity)
         
-        if remaining_weight == 0:
+        if remaining_quantity == 0:
             finish_date = consumed_at
         else:
             finish_date = None
             
         return self.add_consumption(
-            product_id, consumption, remaining_weight=remaining_weight, finish_date=finish_date
+            product_id, consumption, remaining_quantity=remaining_quantity, finish_date=finish_date
         )
 
     def delete_product(self, product_id: str) -> bool:

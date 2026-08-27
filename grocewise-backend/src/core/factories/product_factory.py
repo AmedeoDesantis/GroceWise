@@ -7,6 +7,7 @@ import re
 
 logger = logging.getLogger(__name__)
 
+#TODO: considerare liquidi, non sono espressi in grammi
 
 class ProductFactory:
     def __init__(self):
@@ -34,14 +35,23 @@ class ProductFactory:
                     return raw_product[localized_key]
         return raw_product.get("product_name", "unknown product name")
 
-    def _get_weight(self, raw_product: dict) -> Optional[float]:
-        quantity_items = [q for key, q in raw_product.items() if key.startswith("quantity")]
-        for quantity in quantity_items:
-            if isinstance(quantity, str):
-                numbers = re.sub(r"[^\d.]", "", str(quantity))
-                if numbers != "":
-                    return float(numbers)
-        return 0.0
+    def _get_quantity(self, raw_product: dict) -> Optional[float]:
+        
+        quantity = raw_product.get("product_quantity", None)
+        
+
+        if not quantity:
+            quantity_items = [q for key, q in raw_product.items() if key.startswith("quantity")]
+            for quantity in quantity_items:
+                if isinstance(quantity, str):
+                    numbers = re.sub(r"[^\d.]", "", str(quantity))
+                    if numbers != "":
+                        return float(numbers)
+            return 0.0
+        
+        #caso versione sgocciolata / non sgocciolata
+        return re.sub(r'[\\/].*', '', quantity).strip()
+        
 
     def _get_ingredients(self, raw_product: dict) -> Optional[list]:
         ingredients = raw_product.get("ingredients", None)
@@ -70,8 +80,6 @@ class ProductFactory:
                 return None
 
             raw_product = response
-            nutrients = self._build_nutrients(raw_product.get("nutriments", {}))
-            weight = self._get_weight(raw_product)
 
             return Product(
                 db_id=None,
@@ -82,9 +90,10 @@ class ProductFactory:
                 buy_date=buy_date,
                 finish_date=finish_date,
                 ingredients=self._get_ingredients(raw_product),
-                nutrients=nutrients,
-                weight=weight,
-                remaining_weight=weight,
+                nutrients=self._build_nutrients(raw_product.get("nutriments", {})),
+                quantity=self._get_quantity(raw_product),
+                unit=raw_product.get("product_quantity_unit", ""),
+                remaining_quantity=self._get_quantity(raw_product),
                 consumptions=[],
             )
         except Exception as e:
@@ -95,20 +104,20 @@ class ProductFactory:
         """RICOSTRUZIONE: Legge il dizionario strutturato proveniente da MongoDB"""
         nutrients_data = data.get("nutrients", {})
         nutrients = self._build_nutrients(nutrients_data)
-        weight = data.get("weight", 0.0) or 0.0
+        quantity = data.get("quantity", 0.0)
         consumptions = self._parse_consumptions(data.get("consumptions", []))
 
-        remaining_weight = data.get("remaining_weight")
-        if remaining_weight is None:
+        remaining_quantity = data.get("remaining_quantity")
+        if remaining_quantity is None:
             # Migrazione documenti legacy con finish_date
             if data.get("finish_date") is not None:
-                remaining_weight = 0.0
-                if not consumptions and weight > 0:
+                remaining_quantity = 0.0
+                if not consumptions and quantity > 0:
                     consumptions = [
-                        ConsumptionEvent(date=data["finish_date"], quantity=weight)
+                        ConsumptionEvent(date=data["finish_date"], quantity=quantity)
                     ]
             else:
-                remaining_weight = weight
+                remaining_quantity = quantity
 
         return Product(
             db_id=str(data.get("_id")),
@@ -120,7 +129,8 @@ class ProductFactory:
             finish_date=data.get("finish_date"),
             nutrients=nutrients,
             ingredients=data.get("ingredients", []),
-            weight=weight,
-            remaining_weight=remaining_weight,
+            quantity=data.get("quantity", 0.0),
+            unit=data.get("unit", ""),
+            remaining_quantity=remaining_quantity,
             consumptions=consumptions,
         )

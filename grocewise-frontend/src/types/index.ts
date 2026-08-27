@@ -20,8 +20,9 @@ export interface Product {
     finish_date?: string;
     nutrients?: Nutrients;
     ingredients?: string[];
-    weight?: number;
-    remaining_weight?: number;
+    quantity?: number;
+    remaining_quantity?: number;
+    unit?: string;
     consumptions?: ConsumptionEvent[];
 }
 

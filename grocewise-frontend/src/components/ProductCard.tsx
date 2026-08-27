@@ -14,6 +14,7 @@ import {
     formatPrice,
     formatIngredients,
     formatNutrients,
+    formatQuantity,
 } from '../utils/formatting';
 import { colors, spacing, shadows, borderRadius } from '../styles/commonStyles';
 
@@ -36,7 +37,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
     // Gestisce il cambio di data del DatePicker nativo
     const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
-        // Su Android il picker va chiuso subito dopo la selezione
         if (Platform.OS === 'android') {
             setShowPicker(false);
         }
@@ -53,7 +53,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
         onConsume(parsedWeight, consumptionDate);
 
-        // Reset totale degli stati
         setInputValue('');
         setConsumptionDate(new Date());
         setShowPicker(false);
@@ -63,13 +62,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <View style={styles.card}>
             {/* --- INFO PRODOTTO --- */}
             <View style={styles.productInfo}>
+
                 <Text style={styles.productName}>{product.name}</Text>
+
                 {product.brand && <Text style={styles.productDetail}>Marca: {product.brand}</Text>}
                 <Text style={styles.productDetail}>Barcode: {product.barcode}</Text>
                 <Text style={styles.productDetail}>Prezzo: {formatPrice(product.price)}</Text>
-                {product.weight != null && <Text style={styles.productDetail}>Peso totale: {product.weight}g</Text>}
-                {product.remaining_weight != null && !product.finish_date && (
-                    <Text style={styles.productDetail}>Residuo: {product.remaining_weight}g</Text>
+                {product.quantity != null && <Text style={styles.productDetail}>Quantità totale: {formatQuantity(product.quantity, product.unit)}</Text>}
+                {product.remaining_quantity != null && !product.finish_date && (
+                    <Text style={styles.productDetail}>Residuo: {formatQuantity(product.remaining_quantity, product.unit)}</Text>
                 )}
                 {product.buy_date && <Text style={styles.productDetail}>Data acquisto: {formatDate(product.buy_date)}</Text>}
                 {product.finish_date && <Text style={styles.productDetail}>Consumato: {formatDate(product.finish_date)}</Text>}
