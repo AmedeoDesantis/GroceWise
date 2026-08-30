@@ -16,6 +16,15 @@ def get_unconsumed_products(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/products/consumed", response_model=list[Product])
+def get_consumed_products(
+    service: FridgeService = Depends(AppContainer.get_fridge_service)
+):
+    try:
+        return service.get_all_consumed_products()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/products/all", response_model=list[Product])
 def get_all_products(
     service: FridgeService = Depends(AppContainer.get_fridge_service)

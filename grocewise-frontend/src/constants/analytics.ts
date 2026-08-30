@@ -9,4 +9,4 @@ export const METRICS_CONFIG: Record<MetricKey, MetricConfig> = {
 };
 
 export const ANALYTICS_DEFAULT_START_DATE = '2026-08-25';
-export const ANALYTICS_DEFAULT_END_DATE = '2026-08-28';
+export const ANALYTICS_DEFAULT_END_DATE = '2026-08-31';

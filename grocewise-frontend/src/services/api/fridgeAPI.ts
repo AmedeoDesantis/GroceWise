@@ -35,6 +35,16 @@ class FridgeAPI {
         }
     }
 
+    async getConsumedProducts(): Promise<Product[]> {
+        try {
+            const response = await this.api.get<Product[]>('/fridge/products/consumed');
+            return response.data;
+        } catch (error) {
+            console.error('Errore nel recupero prodotti consumati:', error);
+            throw error;
+        }
+    }
+
     async getAllProducts(): Promise<Product[]> {
         try {
             const response = await this.api.get<Product[]>('/fridge/products/all');

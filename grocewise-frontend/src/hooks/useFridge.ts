@@ -46,7 +46,7 @@ export const useFridge = () => {
                 await FridgeAPI.consumeProduct(productId, consumedWeight, consumptionDate);
                 await loadProducts();
             } catch (error) {
-                console.error('Errore nel marcatura consumo:', error);
+                console.error('Errore nella marcatura consumo:', error);
                 throw error;
             } finally {
                 setLoading(false);

@@ -26,6 +26,18 @@ class AnalyticsAPI {
             throw error;
         }
     }
+
+    async getSingleProductAnalytics(productId: string, startDate: string, endDate: string): Promise<Record<string, DayStats>> {
+        try {
+            const response = await this.api.get<AnalyticsResponse>(`/analytics/consumption/${productId}`, {
+                params: { start_date: startDate, end_date: endDate },
+            });
+            return response.data.daily_analytics;
+        } catch (error) {
+            console.error(`Errore nel recupero delle statistiche per il prodotto ${productId}:`, error);
+            throw error;
+        }
+    }
 }
 
 export default new AnalyticsAPI();

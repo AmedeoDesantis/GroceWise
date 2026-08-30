@@ -11,7 +11,7 @@ export interface ConsumptionEvent {
 }
 
 export interface Product {
-    db_id?: string;
+    db_id: string;
     barcode: string;
     name: string;
     brand?: string;

@@ -15,7 +15,12 @@ class FridgeService:
         """Recupera tutti i prodotti non ancora consumati (finish_date is None)"""
         all_products = self.repository.get_all_products()
         return [p for p in all_products if p.finish_date is None]
-
+    
+    def get_all_consumed_products(self) -> list:
+        """Recupera tutti i prodotti già consumati (finish_date is not None)"""
+        all_products = self.repository.get_all_products()
+        return [p for p in all_products if p.finish_date is not None]
+    
     def add_product_from_barcode(
         self, barcode: str, price: float = 0.0, buy_date=None, finish_date=None
     ) -> str:

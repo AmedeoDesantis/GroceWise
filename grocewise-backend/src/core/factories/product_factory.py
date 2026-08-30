@@ -41,18 +41,27 @@ class ProductFactory:
         
 
         if not quantity:
-            quantity_items = [q for key, q in raw_product.items() if key.startswith("quantity")]
+            quantity_items = [q for key, q in raw_product.items() if key.startswith("quantity") or key.endswith("quantity")]
             for quantity in quantity_items:
-                if isinstance(quantity, str):
                     numbers = re.sub(r"[^\d.]", "", str(quantity))
-                    if numbers != "":
+                    if numbers != "":  
                         return float(numbers)
             return 0.0
         
         #caso versione sgocciolata / non sgocciolata
         return float(re.sub(r'[\\/].*', '', str(quantity)).strip())
+    
+    def _get_unit(self, raw_product: dict) -> Optional[str]:
+        unit = raw_product.get("product_quantity_unit", None) 
         
-        
+        if unit:
+            return unit
+
+        unit_items = [q for key, q in raw_product.items() if key.startswith("unit") or key.endswith("unit")]
+        for unit in unit_items:
+            if unit in ['g', 'kg', 'ml', 'l']:
+                return unit
+        return None    
 
     def _get_ingredients(self, raw_product: dict) -> Optional[list]:
         ingredients = raw_product.get("ingredients", None)
@@ -93,7 +102,7 @@ class ProductFactory:
                 ingredients=self._get_ingredients(raw_product),
                 nutrients=self._build_nutrients(raw_product.get("nutriments", {})),
                 quantity=self._get_quantity(raw_product),
-                unit=raw_product.get("product_quantity_unit", ""),
+                unit=self._get_unit(raw_product),
                 remaining_quantity=self._get_quantity(raw_product),
                 consumptions=[],
             )
