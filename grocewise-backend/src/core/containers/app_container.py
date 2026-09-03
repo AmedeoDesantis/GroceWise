@@ -38,4 +38,4 @@ class AppContainer:
         """
         factory = DayStatsFactory()
         repository = ProductRepository(mongo_client=cls._mongo_client, factory=ProductFactory())
-        return AnalyticsService(repository=repository, factory=factory)
+        return AnalyticsService(repository=repository, day_stat_factory=factory)

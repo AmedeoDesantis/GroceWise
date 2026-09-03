@@ -49,6 +49,13 @@ class ProductRepository:
         if not results:
             return None
         return self.factory.build_from_dict(results[0])
+    
+    def get_by_barcode(self, barcode: str) -> Product | None:
+        query = {"barcode": barcode}
+        raw_products = self.mongo.find(self.COLLECTION, query)
+        if not raw_products:
+            return None
+        return [self.factory.build_from_dict(raw) for raw in raw_products]
 
     def get_products_by_date_range(self, start_date, end_date) -> list[Product]:
         """Recupera i prodotti filtrando per intervallo di date di acquisto"""

@@ -19,10 +19,10 @@ class ProductFactory:
 
     def _build_nutrients(self, raw_nutrients: dict) -> Nutrients:
         return Nutrients(
-            calories=raw_nutrients.get("calories", raw_nutrients.get("energy-kcal_100g", 0)),
-            proteins=raw_nutrients.get("proteins", raw_nutrients.get("proteins_100g", 0.0)),
-            carbohydrates=raw_nutrients.get("carbohydrates", raw_nutrients.get("carbohydrates_100g", 0.0)),
-            fats=raw_nutrients.get("fats", raw_nutrients.get("fat_100g", 0.0)),
+            calories=round(raw_nutrients.get("calories", raw_nutrients.get("energy-kcal_100g", 0))),   
+            proteins=round(raw_nutrients.get("proteins", raw_nutrients.get("proteins_100g", 0.0)), 2),
+            carbohydrates=round(raw_nutrients.get("carbohydrates", raw_nutrients.get("carbohydrates_100g", 0.0)), 2),
+            fats=round(raw_nutrients.get("fats", raw_nutrients.get("fat_100g", 0.0)), 2),
         )
 
     def _get_localized_name(self, raw_product: dict) -> str:

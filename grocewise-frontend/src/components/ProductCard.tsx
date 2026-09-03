@@ -6,18 +6,23 @@ import {
     StyleSheet,
     TextInput,
     Platform,
+    LayoutAnimation,
+    UIManager,
 } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Product } from '../types';
 import {
     formatDate,
     formatPrice,
-    // formatIngredients, // Decommenta se ti serve
     formatNutrients,
     formatQuantity,
 } from '../utils/formatting';
-// IMPORTANTE: Assicurati di importare typography!
 import { colors, spacing, shadows, borderRadius, typography } from '../styles/commonStyles';
+
+// Abilita le animazioni di layout su Android (necessario per LayoutAnimation)
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 interface ProductCardProps {
     product: Product;
@@ -35,14 +40,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     const [inputValue, setInputValue] = useState<string>('');
     const [consumptionDate, setConsumptionDate] = useState<Date>(new Date());
     const [showPicker, setShowPicker] = useState<boolean>(false);
+    const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
     const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
-        // Su Android il picker modale si chiude automaticamente, quindi aggiorniamo lo stato
         if (Platform.OS === 'android') {
             setShowPicker(false);
         }
-
-        // Aggiorniamo la data SOLO se l'utente ha premuto "Conferma/Imposta" (ignora i tap fuori per annullare)
         if (event.type === 'set' && selectedDate) {
             setConsumptionDate(selectedDate);
         }
@@ -50,42 +53,76 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
     const handleConsumePress = () => {
         if (!onConsume) return;
-
         const parsedWeight = inputValue.trim() !== '' ? parseFloat(inputValue) : null;
         onConsume(parsedWeight, consumptionDate);
-
         setInputValue('');
         setConsumptionDate(new Date());
         setShowPicker(false);
     };
 
+    // Funzione che gestisce l'apertura/chiusura con animazione
+    const toggleExpand = () => {
+        // Configura l'animazione fluida prima di cambiare lo stato
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setIsExpanded(!isExpanded);
+    };
+
     return (
         <View style={styles.card}>
-            {/* --- INFO PRODOTTO --- */}
-            <View style={styles.productInfo}>
+            {/* --- HEADER COLLASSABILE --- */}
+            <TouchableOpacity
+                style={styles.headerRow}
+                onPress={toggleExpand}
+                activeOpacity={0.7}
+            >
                 <Text style={styles.productName}>{product.name}</Text>
+                <Text style={styles.toggleIcon}>{isExpanded ? '▲' : '▼'}</Text>
+            </TouchableOpacity>
 
+            {/* --- INFORMAZIONI PRINCIPALI (Sempre visibili) --- */}
+            <View style={styles.productInfo}>
                 {product.brand && <Text style={styles.productDetail}>Marca: {product.brand}</Text>}
-                <Text style={styles.productDetail}>Barcode: {product.barcode}</Text>
                 <Text style={styles.productDetail}>Prezzo: {formatPrice(product.price)}</Text>
-                {product.quantity != null && <Text style={styles.productDetail}>Quantità totale: {formatQuantity(product.quantity, product.unit)}</Text>}
-                {product.remaining_quantity != null && !product.finish_date && (
-                    <Text style={styles.productDetail}>Residuo: {formatQuantity(product.remaining_quantity, product.unit)}</Text>
+                {product.buy_date && (
+                    <Text style={styles.productDetail}>
+                        Data acquisto: {formatDate(product.buy_date)}
+                    </Text>
                 )}
-                {product.buy_date && <Text style={styles.productDetail}>Data acquisto: {formatDate(product.buy_date)}</Text>}
-                {product.finish_date && <Text style={styles.productDetail}>Consumato: {formatDate(product.finish_date)}</Text>}
 
-                {product.nutrients && (
-                    <View style={styles.nutrientsSection}>
-                        {product.nutrients.calories && <Text style={styles.productDetail}>Calorie: {formatNutrients(product.nutrients.calories, ' kcal')}</Text>}
-                        {product.nutrients.proteins && <Text style={styles.productDetail}>Proteine: {formatNutrients(product.nutrients.proteins, 'g')}</Text>}
-                        {product.nutrients.carbohydrates && <Text style={styles.productDetail}>Carboidrati: {formatNutrients(product.nutrients.carbohydrates, 'g')}</Text>}
-                        {product.nutrients.fats && <Text style={styles.productDetail}>Grassi: {formatNutrients(product.nutrients.fats, 'g')}</Text>}
-                    </View>
+                {product.remaining_quantity != null && !product.finish_date && (
+                    <Text style={styles.productHighlight}>
+                        Residuo: {formatQuantity(product.remaining_quantity, product.unit)}
+                    </Text>
+                )}
+                {product.finish_date && (
+                    <Text style={styles.productHighlight}>
+                        Consumato il: {formatDate(product.finish_date)}
+                    </Text>
                 )}
             </View>
 
-            {/* --- SEZIONE INPUT DI CONSUMO --- */}
+            {/* --- INFORMAZIONI SECONDARIE (Visibili solo se espanso) --- */}
+            {isExpanded && (
+                <View style={styles.expandedSection}>
+                    <Text style={styles.productDetail}>Barcode: {product.barcode}</Text>
+                    {product.quantity != null && (
+                        <Text style={styles.productDetail}>
+                            Quantità totale: {formatQuantity(product.quantity, product.unit)}
+                        </Text>
+                    )}
+
+                    {product.nutrients && (
+                        <View style={styles.nutrientsSection}>
+                            {product.nutrients.calories && <Text style={styles.productDetail}>Calorie: {formatNutrients(product.nutrients.calories, ' kcal')}</Text>}
+                            {product.nutrients.proteins && <Text style={styles.productDetail}>Proteine: {formatNutrients(product.nutrients.proteins, 'g')}</Text>}
+                            {product.nutrients.carbohydrates && <Text style={styles.productDetail}>Carboidrati: {formatNutrients(product.nutrients.carbohydrates, 'g')}</Text>}
+                            {product.nutrients.fats && <Text style={styles.productDetail}>Grassi: {formatNutrients(product.nutrients.fats, 'g')}</Text>}
+                        </View>
+                    )}
+                </View>
+            )}
+
+            {/* --- BARRA DI CONSUMO E DATA (Sempre visibili) --- */}
             {canConsume && !product.finish_date && onConsume && (
                 <View style={styles.consumeInputContainer}>
                     <TextInput
@@ -97,7 +134,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                         onChangeText={setInputValue}
                     />
 
-                    {/* IL FIX È QUI: Usiamo !showPicker per farlo funzionare come un "Toggle" (Apri/Chiudi) */}
                     <TouchableOpacity
                         style={styles.datePickerButton}
                         onPress={() => setShowPicker(!showPicker)}
@@ -112,7 +148,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                         <DateTimePicker
                             value={consumptionDate}
                             mode="date"
-                            // Su iOS 'inline' è il calendario moderno compatto. Su Android 'default' usa il modale di sistema.
                             display={Platform.OS === 'ios' ? 'inline' : 'default'}
                             onChange={onChangeDate}
                         />
@@ -120,7 +155,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 </View>
             )}
 
-            {/* --- BOTTONI DI AZIONE --- */}
+            {/* --- BOTTONI DI AZIONE (Sempre visibili) --- */}
             <View style={styles.actions}>
                 {canConsume && !product.finish_date && onConsume && (
                     <TouchableOpacity style={[styles.button, styles.consumeButton]} onPress={handleConsumePress}>
@@ -137,24 +172,50 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     );
 };
 
-// --- STILI EDITORIALI & FLAT DESIGN ---
 const styles = StyleSheet.create({
     card: {
         backgroundColor: colors.white,
         padding: spacing.lg,
-        borderRadius: borderRadius.lg, // Usiamo lg (8px) per mantenere lo stile squadrato/carta
+        borderRadius: borderRadius.lg,
         marginBottom: spacing.md,
         ...shadows.card
     },
-    productInfo: { marginBottom: spacing.md },
+    headerRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: spacing.sm,
+    },
     productName: {
         ...typography.subtitle,
         color: colors.text,
+        flex: 1,
+        marginRight: spacing.sm,
+    },
+    toggleIcon: {
+        fontSize: 16,
+        color: colors.textSecondary,
+        padding: spacing.xs,
+    },
+    productInfo: {
         marginBottom: spacing.sm
+    },
+    expandedSection: {
+        marginBottom: spacing.md,
+        paddingTop: spacing.sm,
+        borderTopWidth: 1,
+        borderTopColor: colors.border,
     },
     productDetail: {
         ...typography.small,
         color: colors.textSecondary,
+        marginBottom: spacing.xs
+    },
+    productHighlight: {
+        ...typography.body,
+        color: colors.text,
+        fontWeight: '600',
+        marginTop: spacing.xs,
         marginBottom: spacing.xs
     },
     nutrientsSection: {
@@ -164,6 +225,7 @@ const styles = StyleSheet.create({
         borderTopColor: colors.border
     },
     consumeInputContainer: {
+        marginTop: spacing.sm,
         marginBottom: spacing.sm,
         gap: spacing.sm
     },
@@ -200,7 +262,8 @@ const styles = StyleSheet.create({
     },
     actions: {
         flexDirection: 'row',
-        gap: spacing.sm
+        gap: spacing.sm,
+        marginTop: spacing.sm,
     },
     button: {
         flex: 1,

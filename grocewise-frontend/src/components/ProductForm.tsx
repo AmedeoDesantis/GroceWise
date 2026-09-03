@@ -12,7 +12,6 @@ import { colors, spacing, borderRadius, shadows, typography } from '../styles/co
 
 import { BARCODE_MIN_LENGTH, BARCODE_MAX_LENGTH, DEFAULT_PRICE } from '../constants/config';
 
-// Importa il DateTimePicker
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
@@ -29,8 +28,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     const [price, setPrice] = useState('0');
     const [scanning, setScanning] = useState(false);
 
-    const [buyDate, setBuyDate] = useState<Date>(new Date()); // Tiene traccia della data scelta
-    const [showDatePicker, setShowDatePicker] = useState(false); // Controlla la visibilità del selettore
+    const [buyDate, setBuyDate] = useState<Date>(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     const [permission, requestPermission] = useCameraPermissions();
 
@@ -44,7 +43,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             await onSubmit(barcode, parseFloat(price) || DEFAULT_PRICE, buyDate);
             setBarcode('');
             setPrice('0');
-            setBuyDate(new Date()); // Reset alla data odierna
+            setBuyDate(new Date());
         } catch (error: any) {
             Alert.alert(
                 'Errore',
@@ -139,7 +138,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 editable={!isLoading}
             />
 
-            {/* SEZIONE COMPONENTE SELETTORE DATA */}
             <Text style={styles.fieldLabel}>Data di acquisto:</Text>
             <TouchableOpacity
                 style={styles.datePickerButton}
@@ -151,13 +149,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 </Text>
             </TouchableOpacity>
 
-            {/* Mostra il DatePicker nativo solo se attivato */}
             {showDatePicker && (
                 <DateTimePicker
                     value={buyDate}
                     mode="date"
-                    display="default" // Mostra il layout migliore in base alla piattaforma (iOS/Android)
-                    maximumDate={new Date()} // Impedisce di selezionare date future
+                    display="default"
+                    maximumDate={new Date()}
                     onChange={onDateChange}
                 />
             )}
@@ -178,7 +175,7 @@ export const styles = StyleSheet.create({
         padding: spacing.lg,
         borderRadius: borderRadius.md,
         marginBottom: spacing.xl,
-        ...shadows.card, // Ripulisce tutte le 5 righe di shadow scritte a mano!
+        ...shadows.card,
     },
     centerContainer: {
         flex: 1,
@@ -196,30 +193,30 @@ export const styles = StyleSheet.create({
         position: 'absolute',
         bottom: spacing.md,
         alignSelf: 'center',
-        backgroundColor: colors.overlay, // Rimosso 'rgba(0,0,0,0.7)'
+        backgroundColor: colors.overlay,
         padding: spacing.sm,
         borderRadius: borderRadius.md,
     },
     label: {
-        ...typography.subtitle, // Applica fontSize 16 e fontWeight 600
+        ...typography.subtitle,
         marginBottom: spacing.md,
         color: colors.text,
     },
     fieldLabel: {
         ...typography.body,
-        fontWeight: '500', // Sovrascrive il peso di body
+        fontWeight: '500',
         color: colors.textSecondary,
         marginBottom: spacing.xs,
     },
     input: {
-        ...typography.body, // Applica fontSize 14
+        ...typography.body,
         borderWidth: 1,
         borderColor: colors.border,
         borderRadius: borderRadius.md,
         padding: spacing.md,
         marginBottom: spacing.md,
         backgroundColor: colors.lightBg,
-        color: colors.text, // Aggiunto per coerenza
+        color: colors.text,
     },
     datePickerButton: {
         borderWidth: 1,
@@ -231,7 +228,7 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     datePickerButtonText: {
-        ...typography.body, // Applica fontSize 14
+        ...typography.body,
         color: colors.text,
     },
     button: {
@@ -244,7 +241,7 @@ export const styles = StyleSheet.create({
         backgroundColor: colors.success,
     },
     cameraButton: {
-        backgroundColor: colors.primary, // Rimosso '#007aff'
+        backgroundColor: colors.primary,
         marginBottom: spacing.md,
     },
     buttonDisabled: {
@@ -253,6 +250,6 @@ export const styles = StyleSheet.create({
     buttonText: {
         ...typography.body,
         color: colors.white,
-        fontWeight: '600', // Sovrascrive il peso
+        fontWeight: '600',
     },
 });

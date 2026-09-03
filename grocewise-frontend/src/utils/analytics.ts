@@ -24,39 +24,44 @@ export interface RankedProduct {
 }
 
 export const calculateProductsRanking = (products: Product[]): RankedProduct[] => {
-    // 1. Filtriamo solo i prodotti validi (che hanno un prezzo, sono stati consumati e hanno macronutrienti)
     const validProducts = products.filter(
-        p => p.price && p.price > 0 && p.buy_date && p.finish_date && p.nutrients
+        p => p.barcode && p.price && p.buy_date && p.finish_date && p.nutrients
     );
 
-    // 2. Calcoliamo il punteggio per ogni prodotto
-    const scoredProducts = validProducts.map(product => {
-        // Calcoliamo quanti giorni è durato (minimo 1 giorno per evitare divisioni per zero)
-        const buyDate = new Date(product.buy_date!).getTime();
-        const finishDate = new Date(product.finish_date!).getTime();
-        const durationDays = Math.max(1, (finishDate - buyDate) / (1000 * 3600 * 24));
+    const groupedByBarcode = new Map<string, Product[]>();
+    validProducts.forEach(product => {
+        const group = groupedByBarcode.get(product.barcode!) || [];
+        group.push(product);
+        groupedByBarcode.set(product.barcode!, group);
+    });
 
-        // Quanto ci è costato al giorno?
-        const costPerDay = product.price! / durationDays;
+    const aggregatedProducts: RankedProduct[] = Array.from(groupedByBarcode.values()).map(group => {
+        let totalScore = 0;
 
-        // Valore Nutrizionale (Puoi bilanciare questi pesi come preferisci)
-        // Esempio: Diamo 2 punti per ogni grammo di proteina e 1 punto ogni 100 kcal
-        const proteinValue = (product.nutrients?.proteins || 0) * 2;
-        const energyValue = (product.nutrients?.calories || 0) / 100;
-        const nutritionScore = proteinValue + energyValue;
+        group.forEach(product => {
+            const buyDate = new Date(product.buy_date!).getTime();
+            const finishDate = new Date(product.finish_date!).getTime();
+            const durationDays = Math.max(1, (finishDate - buyDate) / (1000 * 3600 * 24));
 
-        // SCORE FINALE: Nutrizione diviso Costo Giornaliero
-        const finalScore = nutritionScore / costPerDay;
+            const costPerDay = product.price! / durationDays;
+
+            const proteinValue = (product.nutrients?.proteins || 0) * 2;
+            const energyValue = (product.nutrients?.calories || 0) / 100;
+            const nutritionScore = proteinValue + energyValue;
+
+            totalScore += nutritionScore / costPerDay;
+        });
+
+        const avgScore = totalScore / group.length;
 
         return {
-            product,
-            score: finalScore,
-            scoreLabel: finalScore.toFixed(1) // Arrotonda a 1 decimale (es. "9.8")
+            product: group[0],
+            score: avgScore,
+            scoreLabel: avgScore.toFixed(1)
         };
     });
 
-    // 3. Li ordiniamo dal punteggio più alto al più basso e prendiamo i primi 5
-    return scoredProducts
+    return aggregatedProducts
         .sort((a, b) => b.score - a.score)
         .slice(0, 5);
 };

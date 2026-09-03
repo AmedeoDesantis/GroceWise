@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     statsButton: {
-        backgroundColor: colors.lightBg, // Sfondo grigio caldo
+        backgroundColor: colors.lightBg,
         paddingVertical: spacing.sm,
         paddingHorizontal: spacing.lg,
         borderRadius: borderRadius.md,
