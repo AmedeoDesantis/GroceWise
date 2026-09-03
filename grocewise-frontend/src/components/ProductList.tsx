@@ -41,7 +41,7 @@ export const ProductList: React.FC<ProductListProps> = ({
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            {products.map((product) => (
+            {products.toReversed().map((product) => (
                 <ProductCard
                     key={product.db_id}
                     product={product}

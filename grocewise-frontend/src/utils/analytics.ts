@@ -25,7 +25,7 @@ export interface RankedProduct {
 
 export const calculateProductsRanking = (products: Product[]): RankedProduct[] => {
     const validProducts = products.filter(
-        p => p.barcode && p.price && p.buy_date && p.finish_date && p.nutrients
+        p => p.barcode && p.buy_date && p.finish_date && p.nutrients
     );
 
     const groupedByBarcode = new Map<string, Product[]>();

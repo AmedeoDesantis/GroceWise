@@ -9,13 +9,12 @@ export const colors = {
 
     background: '#F9F8F6',
     white: '#FFFFFF',
-    lightBg: '#F4F2EE',       // Reso ancora un filo più caldo e integrato
+    lightBg: '#F4F2EE',
 
     text: '#36312D',
     textSecondary: '#7A7571',
     textLight: '#ABA5A0',
 
-    // Bordo reso ancora più delicato, quasi impercettibile
     border: '#EAE6E1',
 
     surfaceDark: '#45413E',
@@ -33,11 +32,10 @@ export const spacing = {
     xxl: 32,
 };
 
-// --- RAGGI AFFILATI (Stile Editoriale) ---
 export const borderRadius = {
-    sm: 2,       // Micro-smussatura (invece di 4)
-    md: 4,       // Standard per input e bottoni (invece di 8). Molto strutturato.
-    lg: 8,       // Per le Card e i Grafici (invece di 16). Tagliente ed elegante.
+    sm: 2,
+    md: 4,
+    lg: 8,
     xl: 12,
     xxl: 16,
     pill: 999,
@@ -45,16 +43,11 @@ export const borderRadius = {
 
 export const shadows = StyleSheet.create({
     card: {
-        // Via le ombre! Nel minimalismo puro usiamo il Flat Design.
         shadowColor: 'transparent',
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0,
         shadowRadius: 0,
-        elevation: 0, // Toglie l'ombra anche su Android
-
-        // Invece dell'ombra, applichiamo un bordo chirurgico e leggerissimo
-        // Siccome fai lo "spread" (...shadows.card) nei componenti, questo
-        // bordo si applicherà magicamente a tutte le card senza toccare altro codice.
+        elevation: 0,
         borderWidth: 1,
         borderColor: '#F0EBE6',
     },
