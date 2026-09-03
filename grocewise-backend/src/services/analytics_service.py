@@ -14,12 +14,9 @@ class AnalyticsService:
         products = self.repository.get_all_products()
         return self._get_consumption_statistics_from_products(products, start_date, end_date)
     
-    def get_product_consumption_statistics(self, product_id: str, start_date: datetime, end_date: datetime) -> AnalyticsResponse:
-        product = self.repository.get_by_id(product_id)
-        if not product:
-            raise ValueError(f"Product with ID {product_id} not found.")
+    def get_product_consumption_statistics(self, barcode: str, start_date: datetime, end_date: datetime) -> AnalyticsResponse:
         
-        products = self.repository.get_by_barcode(product.barcode)
+        products = self.repository.get_by_barcode(barcode)
         return self._get_consumption_statistics_from_products(products, start_date, end_date)
 
     def _get_consumption_statistics_from_products(self, products: list[Product], start_date: datetime, end_date: datetime) -> AnalyticsResponse:

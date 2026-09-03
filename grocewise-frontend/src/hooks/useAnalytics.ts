@@ -7,7 +7,7 @@ import { FridgeAPI } from '../services';
 export const useAnalytics = (
     startDate: string,
     endDate: string,
-    selectedProductId: string | null = null
+    selectedBarcode: string | null = null
 ) => {
     const [loading, setLoading] = useState(true);
     const [rawData, setRawData] = useState<Record<string, DayStats> | null>(null);
@@ -22,14 +22,14 @@ export const useAnalytics = (
     const loadAnalytics = useCallback(async () => {
         setLoading(true);
         try {
-            const chartData = selectedProductId
-                ? await AnalyticsAPI.getSingleProductAnalytics(selectedProductId, startDate, endDate)
+            const chartData = selectedBarcode
+                ? await AnalyticsAPI.getSingleProductAnalytics(selectedBarcode, startDate, endDate)
                 : await AnalyticsAPI.getConsumptionAnalytics(startDate, endDate);
 
             setRawData(chartData);
             setSortedDates(sortDates(chartData));
 
-            if (!selectedProductId && topProducts.length === 0) {
+            if (!selectedBarcode && topProducts.length === 0) {
                 const consumedProducts = await FridgeAPI.getConsumedProducts();
                 const ranking = calculateProductsRanking(consumedProducts);
                 setTopProducts(ranking);
@@ -39,7 +39,7 @@ export const useAnalytics = (
         } finally {
             setLoading(false);
         }
-    }, [startDate, endDate, selectedProductId]);
+    }, [startDate, endDate, selectedBarcode]);
 
     return {
         loading,

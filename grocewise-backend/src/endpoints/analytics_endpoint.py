@@ -26,9 +26,9 @@ def get_consumption_statistics(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@router.get("/consumption/{product_id}", response_model=AnalyticsResponse)
+@router.get("/consumption/{barcode}", response_model=AnalyticsResponse)
 def get_product_consumption_statistics(
-    product_id: str = Path(..., description="ID of the product"),
+    barcode: str = Path(..., description="Barcode of the product"),
     start_date: str = Query(..., description="Start date in YYYY-MM-DD format"),
     end_date: str = Query(..., description="End date in YYYY-MM-DD format"),
     service: AnalyticsService = Depends(AppContainer.get_analytics_service)
@@ -41,7 +41,7 @@ def get_product_consumption_statistics(
         if start_date_dt > end_date_dt:
             raise HTTPException(status_code=400, detail="Start date must be before or equal to end date.")
         
-        return service.get_product_consumption_statistics(product_id=product_id, start_date=start_date_dt, end_date=end_date_dt)
+        return service.get_product_consumption_statistics(barcode=barcode, start_date=start_date_dt, end_date=end_date_dt)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:

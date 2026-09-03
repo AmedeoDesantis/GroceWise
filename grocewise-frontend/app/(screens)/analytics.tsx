@@ -18,7 +18,7 @@ import {
 
 export default function AnalyticsScreen() {
     // 1. Nuovo stato per memorizzare quale prodotto stiamo filtrando
-    const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+    const [selectedBarcode, setSelectedBarcode] = useState<string | null>(null);
 
     // 2. Passiamo l'ID al nostro hook
     const {
@@ -30,7 +30,7 @@ export default function AnalyticsScreen() {
         dataset,
         topProducts,
         loadAnalytics,
-    } = useAnalytics(ANALYTICS_DEFAULT_START_DATE, ANALYTICS_DEFAULT_END_DATE, selectedProductId);
+    } = useAnalytics(ANALYTICS_DEFAULT_START_DATE, ANALYTICS_DEFAULT_END_DATE, selectedBarcode);
 
     useEffect(() => {
         loadAnalytics();
@@ -38,10 +38,10 @@ export default function AnalyticsScreen() {
 
     // 3. Troviamo il nome del prodotto selezionato dalla classifica per mostrarlo nel titolo
     const selectedProductName = useMemo(() => {
-        if (!selectedProductId) return null;
-        const product = topProducts.find(p => p.product.db_id === selectedProductId);
+        if (!selectedBarcode) return null;
+        const product = topProducts.find(p => p.product.barcode === selectedBarcode);
         return product ? product.product.name : 'Dettaglio Prodotto';
-    }, [selectedProductId, topProducts]);
+    }, [selectedBarcode, topProducts]);
 
     if (loading && !rawData) {
         return (
@@ -60,14 +60,14 @@ export default function AnalyticsScreen() {
                 {/* INTESTAZIONE DINAMICA */}
                 <View style={styles.headerContainer}>
                     <Text style={styles.title}>
-                        {selectedProductId ? `Andamento: ${selectedProductName}` : 'Analisi Consumi Alimentari'}
+                        {selectedBarcode ? `Andamento: ${selectedProductName}` : 'Analisi Consumi Alimentari'}
                     </Text>
 
                     {/* BOTTONE RIMUOVI FILTRO */}
-                    {selectedProductId && (
+                    {selectedBarcode && (
                         <TouchableOpacity
                             style={styles.clearFilterButton}
-                            onPress={() => setSelectedProductId(null)}
+                            onPress={() => setSelectedBarcode(null)}
                         >
                             <Text style={styles.clearFilterText}>✕ Rimuovi filtro</Text>
                         </TouchableOpacity>
@@ -94,15 +94,15 @@ export default function AnalyticsScreen() {
 
                         {topProducts.map((item, index) => {
                             // Capiamo se questo è il prodotto attualmente cliccato
-                            const isSelected = item.product.db_id === selectedProductId;
+                            const isSelected = item.product.barcode === selectedBarcode;
 
                             return (
-                                <View key={item.product.db_id} style={isSelected ? styles.selectedItemBorder : null}>
+                                <View key={item.product.barcode} style={isSelected ? styles.selectedItemBorder : null}>
                                     <RankingListItem
                                         product={item.product}
                                         position={index + 1}
                                         score={item.scoreLabel}
-                                        onPress={() => setSelectedProductId(item.product.db_id)}
+                                        onPress={() => setSelectedBarcode(item.product.barcode)}
                                     />
                                 </View>
                             );
