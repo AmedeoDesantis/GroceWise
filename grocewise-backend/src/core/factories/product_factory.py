@@ -88,7 +88,7 @@ class ProductFactory:
             if not response:
                 logger.warning(f"Barcode {barcode} non trovato su OpenFoodFacts. Generazione fallback.")
                 return None
-
+        #TODO: gestire errori per unit e quantities mancanti
             raw_product = response
 
             return Product(

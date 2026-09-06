@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { useAnalytics } from '../../src/hooks/useAnalytics';
-import { MetricSelector, ConsumptionChart, RankingListItem } from '../../src/components';
+import { MetricSelector, ConsumptionChart, RankingListItem, ChatDrawer } from '../../src/components';
 import { colors, spacing, typography, borderRadius } from '../../src/styles/commonStyles';
 import {
     ANALYTICS_DEFAULT_START_DATE,
@@ -19,6 +19,7 @@ import {
 export default function AnalyticsScreen() {
     // 1. Nuovo stato per memorizzare quale prodotto stiamo filtrando
     const [selectedBarcode, setSelectedBarcode] = useState<string | null>(null);
+    const [isChatOpen, setIsChatOpen] = useState(false);
 
     // 2. Passiamo l'ID al nostro hook
     const {
@@ -63,15 +64,25 @@ export default function AnalyticsScreen() {
                         {selectedBarcode ? `Andamento: ${selectedProductName}` : 'Analisi Consumi Alimentari'}
                     </Text>
 
-                    {/* BOTTONE RIMUOVI FILTRO */}
-                    {selectedBarcode && (
+                    <View style={styles.headerButtons}>
+                        {/* BOTTONE RIMUOVI FILTRO */}
+                        {selectedBarcode && (
+                            <TouchableOpacity
+                                style={styles.clearFilterButton}
+                                onPress={() => setSelectedBarcode(null)}
+                            >
+                                <Text style={styles.clearFilterText}>✕ Rimuovi filtro</Text>
+                            </TouchableOpacity>
+                        )}
+
+                        {/* BOTTONE ASSISTENTE AI */}
                         <TouchableOpacity
-                            style={styles.clearFilterButton}
-                            onPress={() => setSelectedBarcode(null)}
+                            style={styles.chatButton}
+                            onPress={() => setIsChatOpen(true)}
                         >
-                            <Text style={styles.clearFilterText}>✕ Rimuovi filtro</Text>
+                            <Text style={styles.chatButtonText}>Assistente</Text>
                         </TouchableOpacity>
-                    )}
+                    </View>
                 </View>
 
                 <MetricSelector activeMetric={activeMetric} onMetricChange={setActiveMetric} />
@@ -112,6 +123,8 @@ export default function AnalyticsScreen() {
 
                 <View style={{ height: spacing.xxl }} />
             </ScrollView>
+
+            <ChatDrawer isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
         </SafeAreaView>
     );
 }
@@ -130,8 +143,13 @@ const styles = StyleSheet.create({
         color: colors.text,
         textAlign: 'center',
     },
-    clearFilterButton: {
+    headerButtons: {
+        flexDirection: 'row',
+        gap: spacing.sm,
         marginTop: spacing.sm,
+        alignItems: 'center',
+    },
+    clearFilterButton: {
         paddingVertical: 6,
         paddingHorizontal: spacing.md,
         backgroundColor: colors.lightBg,
@@ -142,6 +160,17 @@ const styles = StyleSheet.create({
     clearFilterText: {
         ...typography.small,
         color: colors.textSecondary,
+        fontWeight: '600',
+    },
+    chatButton: {
+        paddingVertical: 6,
+        paddingHorizontal: spacing.md,
+        backgroundColor: colors.primary,
+        borderRadius: borderRadius.pill,
+    },
+    chatButtonText: {
+        ...typography.small,
+        color: colors.white,
         fontWeight: '600',
     },
 

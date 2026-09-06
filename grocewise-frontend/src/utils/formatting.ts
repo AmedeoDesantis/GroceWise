@@ -35,6 +35,8 @@ export const formatNutrients = (value?: number, unit: string = ''): string => {
 
 export const formatQuantity = (quantity?: number, unit: string = ''): string => {
     if (quantity === undefined || quantity === null) return '';
+    if (unit === undefined || unit === null || unit.trim() === '') return `${quantity}`;
+
     const cleanUnit = unit.trim().toLowerCase();
     const unitMappings: Record<string, { category: 'weight' | 'volume', multiplier: number }> = {
         'mg': { category: 'weight', multiplier: 0.001 },

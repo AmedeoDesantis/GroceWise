@@ -59,6 +59,10 @@ export const typography = {
         fontWeight: 'bold' as const,
         letterSpacing: -0.5,
     },
+    h3: {
+        fontSize: 20,
+        fontWeight: '600' as const,
+    },
     subtitle: {
         fontSize: 16,
         fontWeight: '600' as const,
