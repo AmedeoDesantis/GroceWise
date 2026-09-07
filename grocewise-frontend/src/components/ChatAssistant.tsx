@@ -10,7 +10,8 @@ import {
     Platform,
     ActivityIndicator,
 } from 'react-native';
-import ChatAPI, { ChatMessage, ChatResponse } from '../services/api/chatAPI';
+import { ChatMessage, ChatResponse } from '../types/chat';
+import ChatService from '../services/chatService';
 
 type ChatStatus = 'idle' | 'loading' | 'success' | 'error';
 import { colors, spacing, borderRadius, typography } from '../styles/commonStyles';
@@ -62,7 +63,7 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
 
         try {
             setIsRetrying(false);
-            const response = await ChatAPI.sendMessage(newMessages);
+            const response = await ChatService.sendMessage(newMessages);
             const assistantMessage: ChatMessage = {
                 role: 'assistant',
                 content: response.message,
@@ -84,7 +85,7 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
                 await new Promise(resolve => setTimeout(resolve, 500));
 
                 try {
-                    const response = await ChatAPI.sendMessage(newMessages);
+                    const response = await ChatService.sendMessage(newMessages);
                     const assistantMessage: ChatMessage = {
                         role: 'assistant',
                         content: response.message,
@@ -194,7 +195,7 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
                         styles.modelInfoText,
                         isFallback && styles.modelInfoTextFallback
                     ]}>
-                        {isFallback ? '⚠️ Fallback (risposta simulata)' : `🤖 Gemini: ${modelUsed}`}
+                        {isFallback ? 'Fallback (risposta simulata)' : `Gemini: ${modelUsed}`}
                     </Text>
                 </View>
             )}

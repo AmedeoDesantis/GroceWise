@@ -9,14 +9,3 @@ export const PRODUCT_ID_LENGTH = 24;
 
 // Default Values
 export const DEFAULT_PRICE = 0.0;
-
-// Gemini AI Configuration
-// Per configurare Gemini AI, aggiungi queste variabili nel file .env:
-// EXPO_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
-// Modelli disponibili:
-// - Flash (economico): gemini-1.5-flash
-// - Pro (potente): gemini-1.5-pro
-export const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
-export const GEMINI_FLASH_MODEL = process.env.EXPO_PUBLIC_GEMINI_FLASH_MODEL || 'gemini-3.5-flash-lite';
-export const GEMINI_PRO_MODEL = process.env.EXPO_PUBLIC_GEMINI_PRO_MODEL || 'gemini-3.8-flash';
-
