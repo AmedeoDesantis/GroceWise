@@ -1,5 +1,6 @@
 import openfoodfacts
 from src.core.models.product import Product, Nutrients, ConsumptionEvent
+from src.core.models.override import BarcodeOverride
 from typing import Optional
 import logging
 import os
@@ -7,15 +8,15 @@ import re
 
 logger = logging.getLogger(__name__)
 
-#TODO: considerare liquidi, non sono espressi in grammi
 
 class ProductFactory:
-    def __init__(self):
+    def __init__(self, override_repository):
         self.client = openfoodfacts.API(
             user_agent=os.getenv("OPENFOODFACTS_USER_AGENT", "GroceWise (amedeo.des@gmail.com)"),
             username=os.getenv("OPENFOODFACTS_USERNAME"),
             password=os.getenv("OPENFOODFACTS_PASSWORD"),
         )
+        self.product_override_repository = override_repository
 
     def _build_nutrients(self, raw_nutrients: dict) -> Nutrients:
         return Nutrients(
@@ -88,10 +89,8 @@ class ProductFactory:
             if not response:
                 logger.warning(f"Barcode {barcode} non trovato su OpenFoodFacts. Generazione fallback.")
                 return None
-        #TODO: gestire errori per unit e quantities mancanti
             raw_product = response
-
-            return Product(
+            product = Product(
                 db_id=None,
                 barcode=barcode,
                 name=self._get_localized_name(raw_product),
@@ -103,12 +102,30 @@ class ProductFactory:
                 nutrients=self._build_nutrients(raw_product.get("nutriments", {})),
                 quantity=self._get_quantity(raw_product),
                 unit=self._get_unit(raw_product),
-                remaining_quantity=self._get_quantity(raw_product),
+                remaining_quantity=None,
                 consumptions=[],
             )
+            
+            override = self.product_override_repository.get_override(barcode)
+            if override:
+                product = self._apply_override(product, override)
+            
+            product.remaining_quantity = product.quantity
+            return product
         except Exception as e:
             logger.error(f"Errore nella factory durante la creazione dell'alimento {barcode}: {str(e)}")
             return None
+
+    def _apply_override(self, product: Product, override: BarcodeOverride) -> Product:
+        if override.name:
+            product.name = override.name
+        if override.price is not None:
+            product.price = override.price
+        if override.quantity is not None:
+            product.quantity = override.quantity
+        if override.unit:
+            product.unit = override.unit
+        return product
 
     def build_from_dict(self, data: dict) -> Product:
         """RICOSTRUZIONE: Legge il dizionario strutturato proveniente da MongoDB"""
@@ -117,19 +134,13 @@ class ProductFactory:
         quantity = data.get("quantity", 0.0)
         consumptions = self._parse_consumptions(data.get("consumptions", []))
 
-        remaining_quantity = data.get("remaining_quantity")
-        if remaining_quantity is None:
-            # Migrazione documenti legacy con finish_date
-            if data.get("finish_date") is not None:
-                remaining_quantity = 0.0
-                if not consumptions and quantity > 0:
-                    consumptions = [
-                        ConsumptionEvent(date=data["finish_date"], quantity=quantity)
-                    ]
-            else:
-                remaining_quantity = quantity
-
-        return Product(
+        
+        if data.get("finish_date") and not consumptions:
+            consumptions = [
+                ConsumptionEvent(date=data["finish_date"], quantity=quantity)
+            ]
+        
+        product =  Product(
             db_id=str(data.get("_id")),
             barcode=data.get("barcode", ""),
             name=data.get("name", ""),
@@ -141,6 +152,16 @@ class ProductFactory:
             ingredients=data.get("ingredients", []),
             quantity=data.get("quantity", 0.0),
             unit=data.get("unit", ""),
-            remaining_quantity=remaining_quantity,
+            remaining_quantity=0.0,
             consumptions=consumptions,
         )
+        
+        override = self.product_override_repository.get_override(product.barcode)
+        if override:
+            product = self._apply_override(product, override)
+        
+        product.remaining_quantity = product.quantity    
+        for event in consumptions:
+            product.remaining_quantity -= event.quantity
+
+        return product

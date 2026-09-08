@@ -9,12 +9,14 @@ import {
 import { Product } from '../types';
 import { ProductCard } from './ProductCard';
 import { colors, spacing } from '../styles/commonStyles';
+import { Override } from '../types/override';
 
 interface ProductListProps {
     products: Product[];
     loading: boolean;
     onConsume?: (productId: string, consumedWeight?: number | null, consumptionDate?: Date | null) => void;
     onDelete?: (productId: string) => void;
+    saveOverride?: (override: Override) => Promise<void>;
 }
 
 export const ProductList: React.FC<ProductListProps> = ({
@@ -22,6 +24,7 @@ export const ProductList: React.FC<ProductListProps> = ({
     loading,
     onConsume,
     onDelete,
+    saveOverride,
 }) => {
     if (loading) {
         return (
@@ -47,6 +50,7 @@ export const ProductList: React.FC<ProductListProps> = ({
                     product={product}
                     onConsume={(weight, date) => onConsume?.(product.db_id!, weight, date)}
                     onDelete={() => onDelete?.(product.db_id!)}
+                    onEdit={saveOverride}
                 />
             ))}
             <View style={styles.spacer} />

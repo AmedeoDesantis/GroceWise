@@ -19,15 +19,17 @@ import {
 } from '../utils/formatting';
 import { colors, spacing, shadows, borderRadius, typography } from '../styles/commonStyles';
 
-// Abilita le animazioni di layout su Android (necessario per LayoutAnimation)
+// Abilita le animazioni di layout su Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
+// Aggiornata l'interfaccia per includere onEdit
 interface ProductCardProps {
     product: Product;
     onConsume?: (consumedWeight?: number | null, consumptionDate?: Date | null) => void;
     onDelete?: () => void;
+    onEdit?: (override: { barcode: string; name?: string; price?: number; quantity?: number; unit?: 'g' | 'kg' | 'l' | 'ml' }) => void;
     canConsume?: boolean;
 }
 
@@ -35,12 +37,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     product,
     onConsume,
     onDelete,
+    onEdit,
     canConsume = true,
 }) => {
+    // Stati di consumo e visualizzazione
     const [inputValue, setInputValue] = useState<string>('');
     const [consumptionDate, setConsumptionDate] = useState<Date>(new Date());
     const [showPicker, setShowPicker] = useState<boolean>(false);
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
+
+    // --- NUOVI STATI PER LA MODIFICA ---
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [editName, setEditName] = useState(product.name);
+    const [editPrice, setEditPrice] = useState(product.price?.toString() || '');
+    const [editQuantity, setEditQuantity] = useState(product.quantity?.toString() || '');
+    const [editUnit, setEditUnit] = useState<'g' | 'kg' | 'l' | 'ml' | undefined>(product.unit as any);
 
     const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
         if (Platform.OS === 'android') {
@@ -60,16 +71,108 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         setShowPicker(false);
     };
 
-    // Funzione che gestisce l'apertura/chiusura con animazione
     const toggleExpand = () => {
-        // Configura l'animazione fluida prima di cambiare lo stato
+        if (isEditing) return; // Disabilita l'espansione/chiusura mentre si edita
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setIsExpanded(!isExpanded);
     };
 
+    // --- FUNZIONI DI MODIFICA ---
+    const handleStartEdit = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setIsEditing(true);
+    };
+
+    const handleCancelEdit = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setIsEditing(false);
+        // Resetta i campi ai valori originali
+        setEditName(product.name);
+        setEditPrice(product.price?.toString() || '');
+        setEditQuantity(product.quantity?.toString() || '');
+        setEditUnit(product.unit as any);
+    };
+
+    const handleSaveEdit = () => {
+        if (onEdit) {
+            onEdit({
+                barcode: product.barcode,
+                name: editName !== product.name ? editName : undefined,
+                price: editPrice ? parseFloat(editPrice) : undefined,
+                quantity: editQuantity ? parseFloat(editQuantity) : undefined,
+                unit: editUnit !== product.unit ? editUnit : undefined,
+            });
+        }
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setIsEditing(false);
+    };
+
+    // --- RENDER DEL FORM DI MODIFICA ---
+    if (isEditing) {
+        return (
+            <View style={styles.card}>
+                <Text style={styles.editTitle}>Modifica Prodotto</Text>
+
+                <Text style={styles.inputLabel}>Nome Prodotto</Text>
+                <TextInput
+                    style={styles.input}
+                    value={editName}
+                    onChangeText={setEditName}
+                    placeholder="Nome"
+                    placeholderTextColor={colors.textSecondary}
+                />
+
+                <Text style={styles.inputLabel}>Prezzo (€)</Text>
+                <TextInput
+                    style={styles.input}
+                    value={editPrice}
+                    onChangeText={setEditPrice}
+                    keyboardType="numeric"
+                    placeholder="Es. 2.50"
+                    placeholderTextColor={colors.textSecondary}
+                />
+
+                <Text style={styles.inputLabel}>Quantità totale</Text>
+                <TextInput
+                    style={styles.input}
+                    value={editQuantity}
+                    onChangeText={setEditQuantity}
+                    keyboardType="numeric"
+                    placeholder="Es. 500"
+                    placeholderTextColor={colors.textSecondary}
+                />
+
+                <Text style={styles.inputLabel}>Unità di misura</Text>
+                <View style={styles.unitSelector}>
+                    {['g', 'kg', 'ml', 'l'].map((u) => (
+                        <TouchableOpacity
+                            key={u}
+                            style={[styles.unitButton, editUnit === u && styles.unitButtonActive]}
+                            onPress={() => setEditUnit(u as any)}
+                        >
+                            <Text style={[styles.unitButtonText, editUnit === u && styles.unitButtonTextActive]}>
+                                {u}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+
+                <View style={styles.actions}>
+                    <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancelEdit}>
+                        <Text style={[styles.buttonText, { color: colors.text }]}>Annulla</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSaveEdit}>
+                        <Text style={styles.buttonText}>Salva</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        );
+    }
+
+    // --- RENDER NORMALE DELLA CARD ---
     return (
         <View style={styles.card}>
-            {/* --- HEADER COLLASSABILE --- */}
+            {/* HEADER COLLASSABILE */}
             <TouchableOpacity
                 style={styles.headerRow}
                 onPress={toggleExpand}
@@ -79,7 +182,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 <Text style={styles.toggleIcon}>{isExpanded ? '▲' : '▼'}</Text>
             </TouchableOpacity>
 
-            {/* --- INFORMAZIONI PRINCIPALI (Sempre visibili) --- */}
+            {/* INFORMAZIONI PRINCIPALI */}
             <View style={styles.productInfo}>
                 {product.brand && <Text style={styles.productDetail}>Marca: {product.brand}</Text>}
                 <Text style={styles.productDetail}>Prezzo: {formatPrice(product.price)}</Text>
@@ -101,7 +204,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 )}
             </View>
 
-            {/* --- INFORMAZIONI SECONDARIE (Visibili solo se espanso) --- */}
+            {/* INFORMAZIONI SECONDARIE ESPANSE */}
             {isExpanded && (
                 <View style={styles.expandedSection}>
                     <Text style={styles.productDetail}>Barcode: {product.barcode}</Text>
@@ -122,7 +225,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 </View>
             )}
 
-            {/* --- BARRA DI CONSUMO E DATA (Sempre visibili) --- */}
+            {/* BARRA DI CONSUMO */}
             {canConsume && !product.finish_date && onConsume && (
                 <View style={styles.consumeInputContainer}>
                     <TextInput
@@ -155,11 +258,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 </View>
             )}
 
-            {/* --- BOTTONI DI AZIONE (Sempre visibili) --- */}
+            {/* BOTTONI DI AZIONE AGGIORNATI CON MODIFICA */}
             <View style={styles.actions}>
                 {canConsume && !product.finish_date && onConsume && (
                     <TouchableOpacity style={[styles.button, styles.consumeButton]} onPress={handleConsumePress}>
                         <Text style={styles.buttonText}>Consuma</Text>
+                    </TouchableOpacity>
+                )}
+                {onEdit && (
+                    <TouchableOpacity style={[styles.button, styles.editButton]} onPress={handleStartEdit}>
+                        <Text style={[styles.buttonText, { color: colors.text }]}>Modifica</Text>
                     </TouchableOpacity>
                 )}
                 {onDelete && (
@@ -237,7 +345,8 @@ const styles = StyleSheet.create({
         paddingVertical: spacing.sm,
         paddingHorizontal: spacing.md,
         color: colors.text,
-        backgroundColor: colors.white
+        backgroundColor: colors.white,
+        marginBottom: spacing.sm, // Aggiunto per distanziare gli input in edit
     },
     datePickerButton: {
         flexDirection: 'row',
@@ -270,13 +379,57 @@ const styles = StyleSheet.create({
         paddingVertical: spacing.md,
         paddingHorizontal: spacing.sm,
         borderRadius: borderRadius.md,
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     consumeButton: { backgroundColor: colors.warning },
     deleteButton: { backgroundColor: colors.danger },
+    editButton: { backgroundColor: colors.lightBg, borderWidth: 1, borderColor: colors.border },
+    saveButton: { backgroundColor: colors.primary },
+    cancelButton: { backgroundColor: colors.lightBg, borderWidth: 1, borderColor: colors.border },
     buttonText: {
         ...typography.body,
         color: colors.white,
         fontWeight: '600'
+    },
+
+    editTitle: {
+        ...typography.subtitle,
+        color: colors.text,
+        marginBottom: spacing.md,
+        textAlign: 'center',
+    },
+    inputLabel: {
+        ...typography.small,
+        color: colors.textSecondary,
+        marginBottom: spacing.xs,
+        fontWeight: '500',
+    },
+    unitSelector: {
+        flexDirection: 'row',
+        gap: spacing.sm,
+        marginBottom: spacing.md,
+    },
+    unitButton: {
+        flex: 1,
+        paddingVertical: spacing.sm,
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: borderRadius.md,
+        alignItems: 'center',
+        backgroundColor: colors.lightBg,
+    },
+    unitButtonActive: {
+        backgroundColor: colors.primary,
+        borderColor: colors.primary,
+    },
+    unitButtonText: {
+        ...typography.body,
+        color: colors.textSecondary,
+        textTransform: 'uppercase',
+    },
+    unitButtonTextActive: {
+        color: colors.white,
+        fontWeight: 'bold',
     },
 });

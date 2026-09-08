@@ -8,7 +8,6 @@ router = APIRouter(prefix="/fridge", tags=["Fridge Management"])
 
 @router.get("/products/unconsumed", response_model=list[Product])
 def get_unconsumed_products(
-    # Diciamo a FastAPI di chiamare il metodo del container per avere il servizio pronto
     service: FridgeService = Depends(AppContainer.get_fridge_service)
 ):
     try:

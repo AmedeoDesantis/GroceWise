@@ -31,6 +31,7 @@ export default function FridgeScreen() {
         consumeProduct,
         deleteProduct,
         deleteAllProducts,
+        saveOverride
     } = useFridge();
 
     useEffect(() => {
@@ -121,6 +122,7 @@ export default function FridgeScreen() {
                     loading={loading}
                     onConsume={handleConsumeProduct}
                     onDelete={handleDeleteProduct}
+                    saveOverride={saveOverride}
                 />
 
                 {!loading && products.length > 0 && (

@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Product, FilterType } from '../types';
 import FridgeAPI from '../services/api/fridgeAPI';
+import OverrideAPI from '../services/api/overrideAPI';
 
 export const useFridge = () => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -31,6 +32,22 @@ export const useFridge = () => {
                 await loadProducts();
             } catch (error) {
                 console.error('Errore nell\'aggiunta del prodotto:', error);
+                throw error;
+            } finally {
+                setLoading(false);
+            }
+        },
+        [loadProducts]
+    );
+
+    const saveOverride = useCallback(
+        async (override: { barcode: string; name?: string; price?: number; quantity?: number; unit?: 'g' | 'kg' | 'l' | 'ml' }) => {
+            setLoading(true);
+            try {
+                await OverrideAPI.saveOverride(override);
+                await loadProducts();
+            } catch (error) {
+                console.error('Errore nel salvataggio dell\'override:', error);
                 throw error;
             } finally {
                 setLoading(false);
@@ -94,5 +111,6 @@ export const useFridge = () => {
         consumeProduct,
         deleteProduct,
         deleteAllProducts,
+        saveOverride,
     };
 };
