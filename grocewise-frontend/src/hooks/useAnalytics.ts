@@ -35,7 +35,7 @@ export const useAnalytics = (
                 setTopProducts(ranking);
             }
         } catch (error) {
-            console.error('Errore nel caricamento delle statistiche:', error);
+            console.error('Error loading statistics:', error);
         } finally {
             setLoading(false);
         }

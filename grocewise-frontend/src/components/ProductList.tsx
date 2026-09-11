@@ -37,7 +37,7 @@ export const ProductList: React.FC<ProductListProps> = ({
     if (products.length === 0) {
         return (
             <View style={styles.centerContainer}>
-                <Text style={styles.emptyText}>Nessun prodotto trovato</Text>
+                <Text style={styles.emptyText}>No products found</Text>
             </View>
         );
     }

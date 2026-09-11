@@ -1,114 +1,166 @@
 # GroceWise - Smart Food Inventory Management
 
-GroceWise è un'applicazione mobile per la gestione intelligente dell'inventario alimentare che combina tracciamento dei prodotti, analisi dei consumi e classificazione nutrizionale.
+GroceWise is a mobile application for intelligent food inventory management that combines product tracking, consumption analytics, and nutritional ranking.
 
-## 📋 Panoramica
+## 📋 Overview
 
-GroceWise aiuta gli utenti a:
-- **Tracciare i prodotti alimentari** tramite scanner di codici a barre
-- **Monitorare i consumi** con analisi dettagliate nel tempo
-- **Ottimizzare la spesa** attraverso classifiche di prodotti basate su rapporto qualità/prezzo
-- **Gestire il frigorifero** con filtri per prodotti consumati/non consumati
+GroceWise helps users to:
 
-## 🏗️ Architettura del Progetto
+* **Track food items** using an integrated barcode scanner.
 
-Il progetto segue un'architettura a microservizi con separazione chiara tra frontend e backend:
+
+* **Monitor consumption** with detailed temporal analytics.
+
+
+* **Optimize grocery spending** through product rankings based on value for money.
+
+
+* **Manage the fridge** using filters for consumed and unconsumed items.
+
+
+
+## 🏗️ System Architecture
+
+The project follows a microservice-style split with a clear separation between frontend and backend:
 
 ```
 grocewise/
-├── grocewise-backend/    # API REST in Python/FastAPI
-├── grocewise-frontend/   # App mobile React Native/Expo
-└── docker-compose.yaml   # Configurazione MongoDB
+├── grocewise-backend/    # REST API built with Python/FastAPI
+├── grocewise-frontend/   # React Native/Expo mobile app
+└── docker-compose.yaml   # MongoDB configuration
+
 ```
 
-### Stack Tecnologico
+### Technology Stack
 
 **Backend:**
-- **Framework**: FastAPI (Python)
-- **Database**: MongoDB (Docker)
-- **Architettura**: Clean Architecture con Dependency Injection
-- **Pattern**: Repository, Factory, Service Layer
+
+* **Framework**: FastAPI (Python)
+
+
+* **Database**: MongoDB (via Docker)
+
+
+* **Architecture**: Clean Architecture with Dependency Injection
+
+
+* **Patterns**: Repository, Factory, Service Layer
+
+
 
 **Frontend:**
-- **Framework**: React Native con Expo
-- **Navigazione**: Expo Router
-- **Styling**: StyleSheet personalizzato
-- **Librerie**: expo-camera, react-native-chart-kit, axios
+
+* **Framework**: React Native with Expo
+
+
+* **Navigation**: Expo Router
+
+
+* **Styling**: Custom StyleSheet design system
+
+
+* **Libraries**: `expo-camera`, `react-native-chart-kit`, `axios`
+
 
 ## 🚀 Quick Start
 
-### Prerequisiti
-- Python 3.12+
-- Node.js 18+
-- Docker & Docker Compose
-- Expo CLI
+### Prerequisites
 
-### Setup Backend
+* Python 3.12+
+
+
+* Node.js 18+
+
+
+* Docker & Docker Compose
+
+
+* Expo CLI
+
+
+
+### Backend Setup
 
 ```bash
 cd grocewise-backend
 python -m venv venv
-source venv/bin/activate  # su Windows: venv\Scripts\activate
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
+
 ```
 
-Configura le variabili d'ambiente nel file `.env`:
+Configure your environment variables in the `.env` file:
+
 ```env
 MONGO_ROOT_USER=admin
 MONGO_ROOT_PASSWORD=your_password
 MONGO_URI=mongodb://localhost:27017
 OPENFOODFACTS_USER_AGENT=GroceWise (your_email@example.com)
+
 ```
 
-Avvia MongoDB:
+Start the MongoDB database:
+
 ```bash
 docker-compose up -d
+
 ```
 
-Avvia il server:
+Run the development server:
+
 ```bash
 uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+
 ```
 
-### Setup Frontend
+### Frontend Setup
 
 ```bash
 cd grocewise-frontend
 npm install
+
 ```
 
-Configura le variabili d'ambiente nel file `.env`:
+Configure your environment variables in `.env`:
+
 ```env
 API_BASE_URL=http://localhost:8000
+
 ```
 
-Avvia l'app:
+Start the development client:
+
 ```bash
 npx expo start
+
 ```
 
-Per mobile:
-- Android: `npx expo start --android`
-- iOS: `npx expo start --ios`
+Targeting mobile platforms:
 
-## 📁 Struttura del Progetto
+* Android: `npx expo start --android`
+
+* iOS: `npx expo start --ios`
+
+
+## 📁 Project Structure
 
 ### Backend (Clean Architecture)
 
 ```
 grocewise-backend/
 ├── src/
-│   ├── core/              # Dominio e infrastruttura
+│   ├── core/              # Domain & Infrastructure
 │   │   ├── containers/    # Dependency Injection
 │   │   ├── factories/     # Factory Pattern
-│   │   ├── models/        # Modelli Pydantic
+│   │   ├── models/        # Pydantic Models
 │   │   ├── repositories/  # Repository Pattern
 │   │   └── mongo.py       # MongoDB Client
 │   ├── endpoints/         # API Endpoints
 │   ├── services/          # Business Logic
-│   └── main.py           # Application Entry
-├── .env                  # Variabili ambiente
-└── docker-compose.yaml   # MongoDB Config
+│   └── main.py            # Application Entry Point
+├── .env                   # Environment Variables
+└── docker-compose.yaml    # MongoDB Config
+
 ```
 
 ### Frontend (Component-Based)
@@ -116,200 +168,413 @@ grocewise-backend/
 ```
 grocewise-frontend/
 ├── app/
-│   ├── (screens)/        # Schermate principali
-│   │   ├── index.tsx    # Gestione Frigorifero
-│   │   └── analytics.tsx # Analisi Consumi
-│   ├── _layout.tsx      # Layout globale
-│   └── index.tsx        # Root navigation
+│   ├── (screens)/         # Core Screens
+│   │   ├── index.tsx      # Fridge Management
+│   │   └── analytics.tsx  # Consumption Analytics
+│   ├── _layout.tsx        # Global Layout
+│   └── index.tsx          # Root Navigation
 ├── src/
-│   ├── components/      # Componenti UI riutilizzabili
-│   ├── hooks/          # Custom React Hooks
-│   ├── services/       # API Services
-│   ├── utils/          # Utility functions
-│   ├── constants/      # Configurazioni
-│   ├── types/          # TypeScript types
-│   └── styles/         # Stili condivisi
-├── app.json           # Expo configuration
-└── package.json       # Dependencies
+│   ├── components/        # Reusable UI Components
+│   ├── hooks/             # Custom React Hooks
+│   ├── services/          # API Services
+│   ├── utils/             # Utility Functions
+│   ├── constants/         # App Constants
+│   ├── types/             # TypeScript Types
+│   └── styles/            # Shared Styles
+├── app.json               # Expo Configuration
+└── package.json           # Dependencies
+
 ```
 
-## 🔑 Decisioni Architetturali
+## 🔑 Architectural Decisions
 
 ### Backend
 
 **Dependency Injection Container**
-- Centralizzazione della gestione delle dipendenze in `AppContainer`
-- Facilita testing e manutenzione
-- Segue il principio Inversion of Control
+
+* Centralizes system dependency management within `AppContainer`.
+
+
+* Facilitates testing and long-term maintainability.
+
+
+* Follows the Inversion of Control (IoC) principle.
+
+
 
 **Repository Pattern**
-- Astrazione del layer di accesso ai dati
-- Permite facile cambio di database senza modificare business logic
-- `ProductRepository` gestisce tutte le operazioni CRUD
+
+* Abstracts persistence and data access layers.
+
+
+* Allows switching database implementations without altering core domain logic.
+
+
+* `ProductRepository` handles all database CRUD operations.
+
+
 
 **Factory Pattern**
-- `ProductFactory`: Costruisce prodotti da barcode OpenFoodFacts
-- `DayStatsFactory`: Crea statistiche giornaliere dai dati grezzi
-- Incapsula la logica di creazione complessa
+
+* `ProductFactory`: Constructs product entities by querying OpenFoodFacts barcode data.
+
+
+* `DayStatsFactory`: Assembles daily consumption stats from raw transactional items.
+
+
+* Encapsulates complex entity instantiation and data transformation logic.
+
+
 
 **Service Layer**
-- `FridgeService`: Logica di business per gestione prodotti
-- `AnalyticsService`: Calcolo statistiche consumi
-- Separazione chiara tra API endpoints e business logic
+
+* `FridgeService`: Contains core inventory management business logic.
+
+
+* `AnalyticsService`: Calculates consumption statistics and metrics.
+
+
+* Maintains a clear decoupling between API delivery endpoints and domain rules.
+
+
 
 ### Frontend
 
 **Expo Router**
-- Navigazione file-based
-- Gestione automatica dello stack di navigazione
-- Supporto per deep linking
+
+* File-based routing system.
+
+
+* Automatic navigation stack orchestration.
+
+
+* Built-in deep linking support.
+
+
 
 **Custom Hooks**
-- `useFridge`: Gestione stato frigorifero
-- `useAnalytics`: Gestione dati analitici
-- Logica business separata da UI
+
+* `useFridge`: Manages fridge collection state and operations.
+
+
+* `useAnalytics`: Manages analytics and statistical calculation states.
+
+
+* Isolates business workflows from view components.
+
+
 
 **Component Architecture**
-- Componenti riutilizzabili e testabili
-- Props interface chiare
-- Separazione responsabilità
+
+* Modular, reusable, and isolated UI components.
+
+
+* Explicit, typed props interfaces.
+
+
+* Clear separation of layout and presentation responsibilities.
+
+
 
 **API Services**
-- Axios per chiamate HTTP
-- Centralizzazione endpoint API
-- Error handling consistente
 
-## 📊 Funzionalità
+* Axios-based HTTP clients.
 
-### Gestione Prodotti
-- **Scanner Barcode**: Utilizzo fotocamera per lettura codici a barre
-- **Aggiunta Manuale**: Inserimento barcode e prezzo manualmente
-- **Data Acquisto**: Tracciamento data di acquisto
-- **Consumo Parziale**: Supporto consumo quantità parziali
 
-### Filtri Prodotti
-- **Tutti**: Visualizzazione completa inventario
-- **Non Consumati**: Solo prodotti ancora disponibili
-- **Consumati**: Storico prodotti consumati
+* Centralized endpoint mapping.
 
-### Analisi Consumi
-- **Grafici Temporali**: Visualizzazione consumi nel tempo
-- **Metriche Multiple**: Calorie, Proteine, Carboidrati, Grassi
-- **Dettaglio Prodotto**: Analisi per singolo prodotto
-- **Classifica Prodotti**: Ranking basato su rapporto nutrizione/costo
 
-### Classifica Nutrizionale
-- **Algoritmo Scoring**: Punteggio basato su:
-  - Valore nutrizionale (proteine + calorie)
-  - Costo giornaliero
-  - Durata del prodotto
-- **Top 5**: Mostra i 5 prodotti migliori
-- **Interattività**: Clic per vedere dettagli prodotto
+* Consistent error interception and handling.
+
+
+
+## 📊 Features
+
+### Product Management
+
+* **Barcode Scanner**: Camera-based barcode reading.
+
+
+* **Manual Entry**: Manual input for barcodes, prices, and quantities.
+
+
+* **Purchase Date**: Tracks purchase dates for cost ammortization.
+
+
+* **Partial Consumption**: Supports logging fractional portions of products.
+
+
+
+### Product Filters
+
+* **All**: Displays full inventory history.
+
+
+* **Unconsumed**: Filters exclusively for active, available stock.
+
+
+* **Consumed**: Historical view of completed/consumed items.
+
+
+
+### Consumption Analytics
+
+* **Temporal Charts**: Displays intake trends across customizable date ranges.
+
+
+* **Multiple Metrics**: Tracks Calories, Proteins, Carbohydrates, and Fats.
+
+
+* **Product Breakdown**: Deep dive into individual product trends.
+
+
+* **Product Rankings**: Ranks products based on their nutrition-to-cost efficiency.
+
+
+
+### Nutritional Ranking
+
+* **Scoring Algorithm**: Composite score based on:
+* Nutritional profile (proteins + calories).
+
+
+* Daily amortized cost.
+
+
+* Duration/lifespan of the product.
+
+
+
+
+* **Top 5**: Visualizes top-performing pantry items.
+
+
+* **Interactivity**: Tap items to inspect specific historical records.
+
+
 
 ## 🔌 API Endpoints
 
 ### Fridge Management
-- `GET /fridge/products/unconsumed` - Prodotti non consumati
-- `GET /fridge/products/consumed` - Prodotti consumati
-- `GET /fridge/products/all` - Tutti i prodotti
-- `POST /fridge/products` - Aggiungi prodotto
-- `POST /fridge/products/{id}/consume` - Consuma prodotto
-- `DELETE /fridge/products/{id}` - Elimina prodotto
-- `DELETE /fridge/products/all` - Elimina tutti
+
+* `GET /fridge/products/unconsumed` - List unconsumed products.
+
+
+* `GET /fridge/products/consumed` - List consumed products.
+
+
+* `GET /fridge/products/all` - List all products.
+
+
+* `POST /fridge/products` - Add a new product.
+
+
+* `POST /fridge/products/{id}/consume` - Record consumption.
+
+
+* `DELETE /fridge/products/{id}` - Delete a product.
+
+
+* `DELETE /fridge/products/all` - Delete all products.
+
+
 
 ### Analytics
-- `GET /analytics/consumption` - Statistiche consumi globali
-- `GET /analytics/consumption/{barcode}` - Statistiche singolo prodotto
+
+* `GET /analytics/consumption` - Aggregate consumption statistics.
+
+
+* `GET /analytics/consumption/{barcode}` - Consumption statistics for a single product.
+
+
 
 ### System
-- `GET /health` - Health check
+
+* `GET /health` - Health check status.
+
+
 
 ## 🧪 Testing
 
 ### Backend Testing
+
 ```bash
 cd grocewise-backend
 pytest tests/
+
 ```
 
 ### Frontend Testing
+
 ```bash
 cd grocewise-frontend
 npm test
+
 ```
 
-## 📱 Workflow Utente
+## 📱 User Workflow
 
-1. **Aggiunta Prodotto**
-   - Scansiona barcode con fotocamera
-   - Inserisci prezzo opzionale
-   - Seleziona data acquisto
-   - Prodotto aggiunto al database
+1. **Product Ingestion**
 
-2. **Gestione Frigorifero**
-   - Visualizza lista prodotti
-   - Filtra per stato consumo
-   - Consuma prodotto (totale o parziale)
-   - Elimina prodotti non necessari
+* Scan product barcode using device camera.
 
-3. **Analisi Consumi**
-   - Naviga alla schermata analytics
-   - Visualizza grafici temporali
-   - Cambia metrica (calorie, proteine, ecc.)
-   - Clicca su prodotto per dettagli
 
-4. **Ottimizzazione Spesa**
-   - Consulta classifica prodotti
-   - Identifica prodotti migliori rapporto qualità/prezzo
-   - Usa insights per future decisioni d'acquisto
+* Enter purchase price (optional).
 
-## 🔒 Sicurezza
 
-- CORS configurato per sviluppo
-- Validazione input con Pydantic
-- Sanitizzazione dati OpenFoodFacts
-- Gestione errori appropriata
+* Set purchase date.
 
-## 🚧 Stato Sviluppo
 
-### Funzionalità Implementate
-- ✅ Gestione completa prodotti
-- ✅ Scanner barcode
-- ✅ Filtri prodotti
-- ✅ Consumo parziale
-- ✅ Analytics consumi
-- ✅ Classifica prodotti
-- ✅ Grafici temporali
+* Product is persisted to the database.
 
-### Miglioramenti Futuri
-- 🔄 Notifiche scadenza prodotti
-- 🔄 Sincronizzazione cloud
-- 🔄 Condivisione inventario
-- 🔄 Ricette suggerite
-- 🔄 Budget tracking
-- 🔄 Multi-lingua support
 
-## 🤝 Contributi
 
-Contributi benvenuti! Segui questi passaggi:
 
-1. Fork il progetto
-2. Crea branch feature (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push al branch (`git push origin feature/AmazingFeature`)
-5. Apri Pull Request
+2. **Fridge Management**
 
-## 📄 Licenza
+* Inspect product inventory.
 
-Questo progetto è rilasciato sotto licenza MIT.
 
-## 👥 Autori
+* Filter by consumption state.
 
-- **Amedeo** - Sviluppo completo
 
-## 🙏 Riconoscimenti
+* Consume product (fully or partially).
 
-- OpenFoodFacts per database prodotti
-- Expo per framework React Native
-- FastAPI per framework backend
-- MongoDB per database solution
+
+* Delete unnecessary items.
+
+
+
+
+3. **Consumption Analytics**
+
+* Navigate to the Analytics screen.
+
+
+* Inspect temporal consumption charts.
+
+
+* Switch between tracked macronutrients and calories.
+
+
+* Select products for itemized breakdowns.
+
+
+
+
+4. **Grocery Optimization**
+
+* Review product efficiency rankings.
+
+
+* Identify top-value nutritional staples.
+
+
+* Use insights to optimize future purchasing decisions.
+
+
+
+
+
+## 🔒 Security
+
+* CORS configured for development environments.
+
+
+* Automated schema validation via Pydantic.
+
+
+* Sanitized external API payloads from OpenFoodFacts.
+
+
+* Centralized error and exception handling.
+
+
+
+## 🚧 Development Status
+
+### Implemented Features
+
+* ✅ Full product lifecycle management
+
+
+* ✅ Barcode scanning
+
+
+* ✅ Product inventory filtering
+
+
+* ✅ Partial product consumption
+
+
+* ✅ Consumption analytics
+
+
+* ✅ Product ranking algorithm
+
+
+* ✅ Temporal data charts
+
+
+
+### Roadmap & Future Enhancements
+
+* 🔄 Product expiration alerts and push notifications
+
+
+* 🔄 Cloud multi-device data synchronization
+
+
+* 🔄 Shared household inventory management
+
+
+* 🔄 Recipe generation engine
+
+
+* 🔄 Budget tracking tools
+
+
+* 🔄 Internationalization (i18n) support
+
+
+
+## 🤝 Contributing
+
+Contributions are welcome! Follow these steps:
+
+1. Fork the repository.
+
+
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+
+
+3. Commit your changes (`git commit -m 'Add AmazingFeature'`).
+
+
+4. Push to your branch (`git push origin feature/AmazingFeature`).
+
+
+5. Open a Pull Request.
+
+
+
+## 📄 License
+
+Distributed under the MIT License. See the `LICENSE` file for details.
+
+## 👥 Authors
+
+* **Amedeo** - Full-stack development
+
+## 🙏 Acknowledgements
+
+* OpenFoodFacts for the nutritional product database.
+
+
+* Expo for the React Native cross-platform toolkit.
+
+
+* FastAPI for the high-performance backend framework.
+
+
+* MongoDB for persistent data storage.

@@ -35,7 +35,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
     const handleSubmit = async () => {
         if (!barcode.trim()) {
-            Alert.alert('Errore', 'Inserisci un barcode');
+            Alert.alert('Error', 'Enter a barcode');
             return;
         }
 
@@ -46,8 +46,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             setBuyDate(new Date());
         } catch (error: any) {
             Alert.alert(
-                'Errore',
-                error.response?.data?.detail || 'Errore nell\'aggiunta del prodotto'
+                'Error',
+                error.response?.data?.detail || 'Error adding product'
             );
         }
     };
@@ -68,21 +68,21 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
     if (scanning) {
         if (!permission) {
-            return <View style={styles.centerContainer}><Text>Richiesta permessi in corso...</Text></View>;
+            return <View style={styles.centerContainer}><Text>Requesting permissions...</Text></View>;
         }
 
         if (!permission.granted) {
             return (
                 <View style={styles.container}>
                     <Text style={{ textAlign: 'center', marginBottom: spacing.md }}>
-                        Abbiamo bisogno del tuo permesso per mostrare la fotocamera
+                        We need your permission to show the camera
                     </Text>
-                    <Button onPress={requestPermission} title="Concedi Permesso" />
+                    <Button onPress={requestPermission} title="Grant Permission" />
                     <TouchableOpacity
                         style={[styles.button, { marginTop: spacing.md, backgroundColor: colors.error }]}
                         onPress={() => setScanning(false)}
                     >
-                        <Text style={styles.buttonText}>Annulla</Text>
+                        <Text style={styles.buttonText}>Cancel</Text>
                     </TouchableOpacity>
                 </View>
             );
@@ -101,7 +101,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     style={styles.closeCameraButton}
                     onPress={() => setScanning(false)}
                 >
-                    <Text style={styles.buttonText}>Chiudi Camera</Text>
+                    <Text style={styles.buttonText}>Close Camera</Text>
                 </TouchableOpacity>
             </View>
         );
@@ -109,19 +109,19 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
     return (
         <View style={styles.container}>
-            <Text style={styles.label}>Aggiungi Prodotto</Text>
+            <Text style={styles.label}>Add Product</Text>
 
             <TouchableOpacity
                 style={[styles.button, styles.cameraButton]}
                 onPress={() => setScanning(true)}
                 disabled={isLoading}
             >
-                <Text style={styles.buttonText}>Leggi Barcode</Text>
+                <Text style={styles.buttonText}>Scan Barcode</Text>
             </TouchableOpacity>
 
             <TextInput
                 style={styles.input}
-                placeholder={`Barcode (${BARCODE_MIN_LENGTH}-${BARCODE_MAX_LENGTH} caratteri)`}
+                placeholder={`Barcode (${BARCODE_MIN_LENGTH}-${BARCODE_MAX_LENGTH} characters)`}
                 value={barcode}
                 onChangeText={setBarcode}
                 editable={!isLoading}
@@ -131,21 +131,21 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
             <TextInput
                 style={styles.input}
-                placeholder="Prezzo (opzionale)"
+                placeholder="Price (optional)"
                 value={price}
                 onChangeText={setPrice}
                 keyboardType="decimal-pad"
                 editable={!isLoading}
             />
 
-            <Text style={styles.fieldLabel}>Data di acquisto:</Text>
+            <Text style={styles.fieldLabel}>Purchase Date:</Text>
             <TouchableOpacity
                 style={styles.datePickerButton}
                 onPress={() => setShowDatePicker(true)}
                 disabled={isLoading}
             >
                 <Text style={styles.datePickerButtonText}>
-                    {buyDate.toLocaleDateString('it-IT')}
+                    {buyDate.toLocaleDateString('en-US')}
                 </Text>
             </TouchableOpacity>
 
@@ -164,7 +164,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 onPress={handleSubmit}
                 disabled={isLoading}
             >
-                <Text style={styles.buttonText}>Aggiungi</Text>
+                <Text style={styles.buttonText}>Add</Text>
             </TouchableOpacity>
         </View>
     );

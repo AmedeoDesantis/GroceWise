@@ -15,7 +15,7 @@ export default function RootLayout() {
           headerTitleStyle: {
             fontWeight: '600',
           },
-          headerShadowVisible: false, // FONDAMENTALE: Rimuove l'ombra/linea sotto l'header per il flat design
+          headerShadowVisible: false, // CRITICAL: Removes shadow/line under header for flat design
         }}
       >
         <Stack.Screen
@@ -27,7 +27,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="analytics"
           options={{
-            headerTitle: 'Statistiche Consumi',
+            headerTitle: 'Consumption Statistics',
           }}
         />
       </Stack>

@@ -42,44 +42,44 @@ export default function FridgeScreen() {
     const handleAddProduct = async (barcode: string, price: number, buyDate: Date) => {
         try {
             await addProduct(barcode, price, buyDate.toISOString());
-            Alert.alert('Successo', 'Prodotto aggiunto');
+            Alert.alert('Success', 'Product added');
         } catch (error) {
-            console.error('Errore nell\'aggiunta del prodotto:', error);
+            console.error('Error adding product:', error);
         }
     };
 
     const handleConsumeProduct = async (productId: string, consumedWeight?: number | null, consumptionDate?: Date | null) => {
         try {
             await consumeProduct(productId, consumedWeight, consumptionDate);
-            Alert.alert('Successo', 'Prodotto marcato come consumato');
+            Alert.alert('Success', 'Product marked as consumed');
         } catch (error) {
-            console.error('Errore nel marcatura consumo:', error);
-            Alert.alert('Errore', 'Impossibile marcare il prodotto');
+            console.error('Error marking consumption:', error);
+            Alert.alert('Error', 'Unable to mark product');
         }
     };
 
     const handleDeleteProduct = async (productId: string) => {
         try {
             await deleteProduct(productId);
-            Alert.alert('Successo', 'Prodotto eliminato');
+            Alert.alert('Success', 'Product deleted');
         } catch (error) {
-            console.error('Errore nell\'eliminazione del prodotto:', error);
-            Alert.alert('Errore', 'Impossibile eliminare il prodotto');
+            console.error('Error deleting product:', error);
+            Alert.alert('Error', 'Unable to delete product');
         }
     };
 
     const handleDeleteAll = async () => {
-        Alert.alert('Conferma', 'Eliminare tutti i prodotti?', [
-            { text: 'Annulla', onPress: () => { } },
+        Alert.alert('Confirm', 'Delete all products?', [
+            { text: 'Cancel', onPress: () => { } },
             {
-                text: 'Elimina',
+                text: 'Delete',
                 onPress: async () => {
                     try {
                         await deleteAllProducts();
-                        Alert.alert('Successo', 'Tutti i prodotti eliminati');
+                        Alert.alert('Success', 'All products deleted');
                     } catch (error) {
-                        console.error('Errore nell\'eliminazione di tutti i prodotti:', error);
-                        Alert.alert('Errore', 'Impossibile eliminare i prodotti');
+                        console.error('Error deleting all products:', error);
+                        Alert.alert('Error', 'Unable to delete products');
                     }
                 },
             },
@@ -99,13 +99,13 @@ export default function FridgeScreen() {
                             onPress={() => router.push('/analytics')}
                             style={styles.statsButton}
                         >
-                            <Text style={styles.statsButtonText}>Vedi Statistiche</Text>
+                            <Text style={styles.statsButtonText}>Statistics</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => setIsChatOpen(true)}
                             style={styles.chatButton}
                         >
-                            <Text style={styles.chatButtonText}>💬 Assistente AI</Text>
+                            <Text style={styles.chatButtonText}>AI Assistant</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

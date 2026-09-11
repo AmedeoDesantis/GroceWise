@@ -19,12 +19,12 @@ import {
 } from '../utils/formatting';
 import { colors, spacing, shadows, borderRadius, typography } from '../styles/commonStyles';
 
-// Abilita le animazioni di layout su Android
+// Enable layout animations on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-// Aggiornata l'interfaccia per includere onEdit
+// Updated interface to include onEdit
 interface ProductCardProps {
     product: Product;
     onConsume?: (consumedWeight?: number | null, consumptionDate?: Date | null) => void;
@@ -40,13 +40,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     onEdit,
     canConsume = true,
 }) => {
-    // Stati di consumo e visualizzazione
+    // Consumption and display states
     const [inputValue, setInputValue] = useState<string>('');
     const [consumptionDate, setConsumptionDate] = useState<Date>(new Date());
     const [showPicker, setShowPicker] = useState<boolean>(false);
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
-    // --- NUOVI STATI PER LA MODIFICA ---
+    // --- NEW STATES FOR EDITING ---
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [editName, setEditName] = useState(product.name);
     const [editPrice, setEditPrice] = useState(product.price?.toString() || '');
@@ -72,12 +72,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     };
 
     const toggleExpand = () => {
-        if (isEditing) return; // Disabilita l'espansione/chiusura mentre si edita
+        if (isEditing) return; // Disable expand/collapse while editing
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setIsExpanded(!isExpanded);
     };
 
-    // --- FUNZIONI DI MODIFICA ---
+    // --- EDITING FUNCTIONS ---
     const handleStartEdit = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setIsEditing(true);
@@ -86,7 +86,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     const handleCancelEdit = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setIsEditing(false);
-        // Resetta i campi ai valori originali
+        // Reset fields to original values
         setEditName(product.name);
         setEditPrice(product.price?.toString() || '');
         setEditQuantity(product.quantity?.toString() || '');
@@ -107,13 +107,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         setIsEditing(false);
     };
 
-    // --- RENDER DEL FORM DI MODIFICA ---
+    // --- RENDER EDIT FORM ---
     if (isEditing) {
         return (
             <View style={styles.card}>
-                <Text style={styles.editTitle}>Modifica Prodotto</Text>
+                <Text style={styles.editTitle}>Edit Product</Text>
 
-                <Text style={styles.inputLabel}>Nome Prodotto</Text>
+                <Text style={styles.inputLabel}>Product Name</Text>
                 <TextInput
                     style={styles.input}
                     value={editName}
@@ -122,27 +122,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                     placeholderTextColor={colors.textSecondary}
                 />
 
-                <Text style={styles.inputLabel}>Prezzo (€)</Text>
+                <Text style={styles.inputLabel}>Price (€)</Text>
                 <TextInput
                     style={styles.input}
                     value={editPrice}
                     onChangeText={setEditPrice}
                     keyboardType="numeric"
-                    placeholder="Es. 2.50"
+                    placeholder="Ex. 2.50"
                     placeholderTextColor={colors.textSecondary}
                 />
 
-                <Text style={styles.inputLabel}>Quantità totale</Text>
+                <Text style={styles.inputLabel}>Total Quantity</Text>
                 <TextInput
                     style={styles.input}
                     value={editQuantity}
                     onChangeText={setEditQuantity}
                     keyboardType="numeric"
-                    placeholder="Es. 500"
+                    placeholder="Ex. 500"
                     placeholderTextColor={colors.textSecondary}
                 />
 
-                <Text style={styles.inputLabel}>Unità di misura</Text>
+                <Text style={styles.inputLabel}>Unit of Measure</Text>
                 <View style={styles.unitSelector}>
                     {['g', 'kg', 'ml', 'l'].map((u) => (
                         <TouchableOpacity
@@ -159,20 +159,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
                 <View style={styles.actions}>
                     <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancelEdit}>
-                        <Text style={[styles.buttonText, { color: colors.text }]}>Annulla</Text>
+                        <Text style={[styles.buttonText, { color: colors.text }]}>Cancel</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSaveEdit}>
-                        <Text style={styles.buttonText}>Salva</Text>
+                        <Text style={styles.buttonText}>Save</Text>
                     </TouchableOpacity>
                 </View>
             </View>
         );
     }
 
-    // --- RENDER NORMALE DELLA CARD ---
+    // --- NORMAL CARD RENDER ---
     return (
         <View style={styles.card}>
-            {/* HEADER COLLASSABILE */}
+            {/* COLLAPSIBLE HEADER */}
             <TouchableOpacity
                 style={styles.headerRow}
                 onPress={toggleExpand}
@@ -182,55 +182,55 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 <Text style={styles.toggleIcon}>{isExpanded ? '▲' : '▼'}</Text>
             </TouchableOpacity>
 
-            {/* INFORMAZIONI PRINCIPALI */}
+            {/* MAIN INFORMATION */}
             <View style={styles.productInfo}>
-                {product.brand && <Text style={styles.productDetail}>Marca: {product.brand}</Text>}
-                <Text style={styles.productDetail}>Prezzo: {formatPrice(product.price)}</Text>
+                {product.brand && <Text style={styles.productDetail}>Brand: {product.brand}</Text>}
+                <Text style={styles.productDetail}>Price: {formatPrice(product.price)}</Text>
                 {product.buy_date && (
                     <Text style={styles.productDetail}>
-                        Data acquisto: {formatDate(product.buy_date)}
+                        Purchase Date: {formatDate(product.buy_date)}
                     </Text>
                 )}
 
                 {product.remaining_quantity != null && !product.finish_date && (
                     <Text style={styles.productHighlight}>
-                        Residuo: {formatQuantity(product.remaining_quantity, product.unit)}
+                        Remaining: {formatQuantity(product.remaining_quantity, product.unit)}
                     </Text>
                 )}
                 {product.finish_date && (
                     <Text style={styles.productHighlight}>
-                        Consumato il: {formatDate(product.finish_date)}
+                        Consumed on: {formatDate(product.finish_date)}
                     </Text>
                 )}
             </View>
 
-            {/* INFORMAZIONI SECONDARIE ESPANSE */}
+            {/* EXPANDED SECONDARY INFORMATION */}
             {isExpanded && (
                 <View style={styles.expandedSection}>
                     <Text style={styles.productDetail}>Barcode: {product.barcode}</Text>
                     {product.quantity != null && (
                         <Text style={styles.productDetail}>
-                            Quantità totale: {formatQuantity(product.quantity, product.unit)}
+                            Total Quantity: {formatQuantity(product.quantity, product.unit)}
                         </Text>
                     )}
 
                     {product.nutrients && (
                         <View style={styles.nutrientsSection}>
-                            {product.nutrients.calories && <Text style={styles.productDetail}>Calorie: {formatNutrients(product.nutrients.calories, ' kcal')}</Text>}
-                            {product.nutrients.proteins && <Text style={styles.productDetail}>Proteine: {formatNutrients(product.nutrients.proteins, 'g')}</Text>}
-                            {product.nutrients.carbohydrates && <Text style={styles.productDetail}>Carboidrati: {formatNutrients(product.nutrients.carbohydrates, 'g')}</Text>}
-                            {product.nutrients.fats && <Text style={styles.productDetail}>Grassi: {formatNutrients(product.nutrients.fats, 'g')}</Text>}
+                            {product.nutrients.calories && <Text style={styles.productDetail}>Calories: {formatNutrients(product.nutrients.calories, ' kcal')}</Text>}
+                            {product.nutrients.proteins && <Text style={styles.productDetail}>Proteins: {formatNutrients(product.nutrients.proteins, 'g')}</Text>}
+                            {product.nutrients.carbohydrates && <Text style={styles.productDetail}>Carbohydrates: {formatNutrients(product.nutrients.carbohydrates, 'g')}</Text>}
+                            {product.nutrients.fats && <Text style={styles.productDetail}>Fats: {formatNutrients(product.nutrients.fats, 'g')}</Text>}
                         </View>
                     )}
                 </View>
             )}
 
-            {/* BARRA DI CONSUMO */}
+            {/* CONSUMPTION BAR */}
             {canConsume && !product.finish_date && onConsume && (
                 <View style={styles.consumeInputContainer}>
                     <TextInput
                         style={styles.input}
-                        placeholder="Peso cons. (g o ml) - Opzionale"
+                        placeholder="Cons. weight (g or ml) - Optional"
                         placeholderTextColor={colors.textSecondary}
                         keyboardType="numeric"
                         value={inputValue}
@@ -241,9 +241,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                         style={styles.datePickerButton}
                         onPress={() => setShowPicker(!showPicker)}
                     >
-                        <Text style={styles.datePickerLabel}>Data di consumo:</Text>
+                        <Text style={styles.datePickerLabel}>Consumption Date:</Text>
                         <Text style={styles.datePickerValue}>
-                            {consumptionDate.toLocaleDateString('it-IT')}
+                            {consumptionDate.toLocaleDateString('en-US')}
                         </Text>
                     </TouchableOpacity>
 
@@ -258,21 +258,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 </View>
             )}
 
-            {/* BOTTONI DI AZIONE AGGIORNATI CON MODIFICA */}
+            {/* ACTION BUTTONS UPDATED WITH EDIT */}
             <View style={styles.actions}>
                 {canConsume && !product.finish_date && onConsume && (
                     <TouchableOpacity style={[styles.button, styles.consumeButton]} onPress={handleConsumePress}>
-                        <Text style={styles.buttonText}>Consuma</Text>
+                        <Text style={styles.buttonText}>Consume</Text>
                     </TouchableOpacity>
                 )}
                 {onEdit && (
                     <TouchableOpacity style={[styles.button, styles.editButton]} onPress={handleStartEdit}>
-                        <Text style={[styles.buttonText, { color: colors.text }]}>Modifica</Text>
+                        <Text style={[styles.buttonText, { color: colors.text }]}>Edit</Text>
                     </TouchableOpacity>
                 )}
                 {onDelete && (
                     <TouchableOpacity style={[styles.button, styles.deleteButton]} onPress={onDelete}>
-                        <Text style={styles.buttonText}>Elimina</Text>
+                        <Text style={styles.buttonText}>Delete</Text>
                     </TouchableOpacity>
                 )}
             </View>
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: spacing.md,
         color: colors.text,
         backgroundColor: colors.white,
-        marginBottom: spacing.sm, // Aggiunto per distanziare gli input in edit
+        marginBottom: spacing.sm, // Added to space inputs in edit mode
     },
     datePickerButton: {
         flexDirection: 'row',

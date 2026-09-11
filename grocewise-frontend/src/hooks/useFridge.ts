@@ -17,7 +17,7 @@ export const useFridge = () => {
                     : await FridgeAPI.getAllProducts();
             setProducts(data);
         } catch (error) {
-            console.error('Errore nel caricamento prodotti:', error);
+            console.error('Error loading products:', error);
             throw error;
         } finally {
             setLoading(false);
@@ -31,7 +31,7 @@ export const useFridge = () => {
                 await FridgeAPI.addProduct(barcode, price, buy_date);
                 await loadProducts();
             } catch (error) {
-                console.error('Errore nell\'aggiunta del prodotto:', error);
+                console.error('Error adding product:', error);
                 throw error;
             } finally {
                 setLoading(false);
@@ -47,7 +47,7 @@ export const useFridge = () => {
                 await OverrideAPI.saveOverride(override);
                 await loadProducts();
             } catch (error) {
-                console.error('Errore nel salvataggio dell\'override:', error);
+                console.error('Error saving override:', error);
                 throw error;
             } finally {
                 setLoading(false);
@@ -63,7 +63,7 @@ export const useFridge = () => {
                 await FridgeAPI.consumeProduct(productId, consumedWeight, consumptionDate);
                 await loadProducts();
             } catch (error) {
-                console.error('Errore nella marcatura consumo:', error);
+                console.error('Error marking consumption:', error);
                 throw error;
             } finally {
                 setLoading(false);
@@ -79,7 +79,7 @@ export const useFridge = () => {
                 await FridgeAPI.deleteProduct(productId);
                 await loadProducts();
             } catch (error) {
-                console.error('Errore nell\'eliminazione del prodotto:', error);
+                console.error('Error deleting product:', error);
                 throw error;
             } finally {
                 setLoading(false);
@@ -94,7 +94,7 @@ export const useFridge = () => {
             await FridgeAPI.deleteAllProducts();
             await loadProducts();
         } catch (error) {
-            console.error('Errore nell\'eliminazione di tutti i prodotti:', error);
+            console.error('Error deleting all products:', error);
             throw error;
         } finally {
             setLoading(false);

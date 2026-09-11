@@ -2,11 +2,11 @@ import { ChatMessage, ChatResponse } from '../types/chat';
 
 export function getSimulatedResponse(messages: ChatMessage[]): ChatResponse {
     const userText = messages.filter(m => m.role === 'user').pop()?.content.toLowerCase() || '';
-    let response = 'Posso aiutarti con la gestione dei prodotti nel frigo e suggerimenti di ricette.';
+    let response = 'I can help you with fridge product management and recipe suggestions.';
 
-    if (userText.includes('ciao')) response = 'Ciao! Sono il tuo assistente GroceWise.';
-    else if (userText.includes('ricetta')) response = 'Posso suggerirti alcune ricette basate sui prodotti nel tuo frigo!';
-    else if (userText.includes('scadenza')) response = 'Ti consiglio di consumare prima i prodotti più vicini alla scadenza.';
+    if (userText.includes('hello') || userText.includes('hi')) response = 'Hello! I am your GroceWise assistant.';
+    else if (userText.includes('recipe')) response = 'I can suggest some recipes based on products in your fridge!';
+    else if (userText.includes('expiration') || userText.includes('expiry')) response = 'I recommend consuming products closer to expiration first.';
 
     return {
         message: response,

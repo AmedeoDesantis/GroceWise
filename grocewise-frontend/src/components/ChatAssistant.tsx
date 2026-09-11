@@ -24,7 +24,7 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
             role: 'assistant',
-            content: 'Ciao! Sono il tuo assistente GroceWise. Posso aiutarti a gestire i prodotti nel tuo frigo, suggerirti ricette o darti consigli sui consumi. Come posso aiutarti oggi?',
+            content: 'Hello! I am your GroceWise assistant. I can help you manage products in your fridge, suggest recipes, or give you advice on consumption. How can I help you today?',
         },
     ]);
     const [inputText, setInputText] = useState('');
@@ -74,14 +74,14 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
             setIsFallback(response.isFallback || false);
             setFunctionCalls(response.functionCalls || []);
         } catch (error: any) {
-            console.error('Errore nell\'invio del messaggio:', error);
+            console.error('Error sending message:', error);
 
-            // Gestione errore 503 per mostrare all'utente che stiamo riprovando
+            // Handle 503 error to show user we are retrying
             if (error.response?.status === 503) {
                 setIsRetrying(true);
-                setErrorMessage('Server Gemini troppo pieno, attendo 10 secondi e riprovo...');
+                setErrorMessage('Gemini server too busy, waiting 10 seconds and retrying...');
 
-                // Aspettiamo un po' per dare tempo all'API di fare il retry
+                // Wait a bit to give API time to retry
                 await new Promise(resolve => setTimeout(resolve, 500));
 
                 try {
@@ -98,21 +98,21 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
                 } catch (retryError) {
                     const errorMessage: ChatMessage = {
                         role: 'assistant',
-                        content: 'Mi dispiace, anche dopo il retry si è verificato un errore. Per favore riprova più tardi.',
+                        content: 'Sorry, even after retry an error occurred. Please try again later.',
                     };
                     setMessages([...newMessages, errorMessage]);
                     setStatus('error');
-                    setErrorMessage('Impossibile connettersi al servizio AI dopo il retry.');
+                    setErrorMessage('Unable to connect to AI service after retry.');
                     setIsFallback(true);
                 }
             } else {
                 const errorMessage: ChatMessage = {
                     role: 'assistant',
-                    content: 'Mi dispiace, si è verificato un errore. Per favore riprova.',
+                    content: 'Sorry, an error occurred. Please try again.',
                 };
                 setMessages([...newMessages, errorMessage]);
                 setStatus('error');
-                setErrorMessage('Si è verificato un errore di connessione con il servizio AI.');
+                setErrorMessage('Connection error with AI service.');
                 setIsFallback(true);
             }
         } finally {
@@ -125,7 +125,7 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
         setMessages([
             {
                 role: 'assistant',
-                content: 'Ciao! Sono il tuo assistente GroceWise. Posso aiutarti a gestire i prodotti nel tuo frigo, suggerirti ricette o darti consigli sui consumi. Come posso aiutarti oggi?',
+                content: 'Hello! I am your GroceWise assistant. I can help you manage products in your fridge, suggest recipes, or give you advice on consumption. How can I help you today?',
             },
         ]);
         setStatus('idle');
@@ -144,14 +144,14 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
         >
             <View style={styles.header}>
                 <View style={styles.headerLeft}>
-                    <Text style={styles.headerTitle}>Assistente AI</Text>
+                    <Text style={styles.headerTitle}>AI Assistant</Text>
                     {status !== 'idle' && (
                         <View style={styles.statusContainer}>
                             {status === 'loading' && (
                                 <View style={styles.statusLoading}>
                                     <ActivityIndicator size="small" color={colors.primary} />
                                     <Text style={styles.statusText}>
-                                        {isRetrying ? 'Retry (503)...' : 'Caricamento...'}
+                                        {isRetrying ? 'Retry (503)...' : 'Loading...'}
                                     </Text>
                                 </View>
                             )}
@@ -170,11 +170,11 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
                 </View>
                 <View style={styles.headerButtons}>
                     <TouchableOpacity onPress={clearChat} style={styles.headerButton}>
-                        <Text style={styles.headerButtonText}>Nuova chat</Text>
+                        <Text style={styles.headerButtonText}>New Chat</Text>
                     </TouchableOpacity>
                     {onClose && (
                         <TouchableOpacity onPress={onClose} style={styles.headerButton}>
-                            <Text style={styles.headerButtonText}>Chiudi</Text>
+                            <Text style={styles.headerButtonText}>Close</Text>
                         </TouchableOpacity>
                     )}
                 </View>
@@ -195,14 +195,14 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
                         styles.modelInfoText,
                         isFallback && styles.modelInfoTextFallback
                     ]}>
-                        {isFallback ? 'Fallback (risposta simulata)' : `Gemini: ${modelUsed}`}
+                        {isFallback ? 'Fallback (simulated response)' : `Gemini: ${modelUsed}`}
                     </Text>
                 </View>
             )}
 
             {functionCalls.length > 0 && (
                 <View style={styles.functionCallsInfo}>
-                    <Text style={styles.functionCallsTitle}>Funzioni chiamate:</Text>
+                    <Text style={styles.functionCallsTitle}>Functions called:</Text>
                     {functionCalls.map((call, index) => (
                         <Text key={index} style={styles.functionCallText}>
                             • {call.name}
@@ -247,7 +247,7 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
                     style={styles.input}
                     value={inputText}
                     onChangeText={setInputText}
-                    placeholder="Scrivi un messaggio..."
+                    placeholder="Write a message..."
                     placeholderTextColor={colors.textSecondary}
                     multiline
                     maxLength={500}
@@ -258,7 +258,7 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
                     style={[styles.sendButton, (!inputText.trim() || isLoading) && styles.sendButtonDisabled]}
                     disabled={!inputText.trim() || isLoading}
                 >
-                    <Text style={styles.sendButtonText}>Invia</Text>
+                    <Text style={styles.sendButtonText}>Send</Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>

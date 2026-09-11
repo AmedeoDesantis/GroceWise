@@ -1,362 +1,394 @@
 # GroceWise Frontend
 
-App mobile React Native/Expo per GroceWise - Sistema di gestione intelligente dell'inventario alimentare.
+React Native/Expo mobile app for GroceWise - Smart food inventory management system.
 
-## 📋 Panoramica
+## 📋 Overview
 
-Il frontend fornisce un'interfaccia mobile intuitiva per la gestione dei prodotti alimentari, scanner di codici a barre, analisi dei consumi e visualizzazione di classifiche nutrizionali. Costruito con React Native e Expo per supporto multi-piattaforma (iOS, Android, Web).
+The frontend provides an intuitive mobile interface for food product management, barcode scanning, consumption analytics, and nutritional rankings visualization. Built with React Native and Expo for cross-platform support (iOS, Android, Web).
 
-## 🏗️ Architettura
+## 🏗️ Architecture
 
 ### Component-Based Architecture
 
 ```
 ┌─────────────────────────────────────┐
-│      Presentation Layer             │
-│      (Screens, Components)         │
+│       Presentation Layer            │
+│       (Screens, Components)         │
 └─────────────────────────────────────┘
               ↓
 ┌─────────────────────────────────────┐
-│      Custom Hooks Layer             │
-│      (Business Logic)               │
+│       Custom Hooks Layer            │
+│       (Business Logic)              │
 └─────────────────────────────────────┘
               ↓
 ┌─────────────────────────────────────┐
-│      API Services Layer             │
-│      (HTTP Communication)           │
+│       API Services Layer            │
+│       (HTTP Communication)          │
 └─────────────────────────────────────┘
               ↓
 ┌─────────────────────────────────────┐
-│      Backend API                    │
-│      (FastAPI + MongoDB)            │
+│       Backend API                   │
+│       (FastAPI + MongoDB)           │
 └─────────────────────────────────────┘
+
 ```
 
-### Design Patterns Implementati
+### Implemented Design Patterns
 
 **Custom Hooks Pattern**
-- `useFridge`: Gestione stato frigorifero e operazioni CRUD
-- `useAnalytics`: Gestione dati analitici e caricamento statistiche
-- Separazione logica business da UI
-- Riutilizzabilità across componenti
+
+* `useFridge`: Fridge state management and CRUD operations
+* `useAnalytics`: Analytics data management and statistics loading
+* Separation of business logic from UI
+* Reusability across components
 
 **Component Composition**
-- Componenti atomici e riutilizzabili
-- Props interface chiare e typed
-- Separazione responsabilità visive
+
+* Atomic and reusable components
+* Clear and typed props interfaces
+* Separation of visual concerns
 
 **Service Layer Pattern**
-- API services centralizzati
-- Axios per chiamate HTTP
-- Error handling consistente
-- Interceptor per gestione errori globali
 
-## 📁 Struttura del Progetto
+* Centralized API services
+* Axios for HTTP communication
+* Consistent error handling
+* Interceptors for global error management
+
+## 📁 Project Structure
 
 ```
 grocewise-frontend/
 ├── app/                          # Expo Router (File-based routing)
-│   ├── (screens)/               # Schermate principali
-│   │   ├── index.tsx           # Gestione Frigorifero
-│   │   └── analytics.tsx       # Analisi Consumi
-│   ├── _layout.tsx             # Layout globale
-│   └── index.tsx               # Root navigation
+│   ├── (screens)/                # Main screens
+│   │   ├── index.tsx             # Fridge Management
+│   │   └── analytics.tsx         # Consumption Analytics
+│   ├── _layout.tsx               # Global layout
+│   └── index.tsx                 # Root navigation
 ├── src/
-│   ├── components/             # Componenti UI riutilizzabili
-│   │   ├── ProductForm.tsx    # Form aggiunta prodotto
-│   │   ├── ProductCard.tsx    # Card prodotto singolo
-│   │   ├── ProductList.tsx    # Lista prodotti
-│   │   ├── FilterButtons.tsx  # Filtri stato consumo
-│   │   ├── MetricSelector.tsx # Selettore metriche analisi
-│   │   ├── ConsumptionChart.tsx # Grafico consumi
-│   │   └── RankingListItem.tsx # Item classifica prodotti
-│   ├── hooks/                 # Custom React Hooks
-│   │   ├── useFridge.ts       # Hook gestione frigo
-│   │   └── useAnalytics.ts    # Hook gestione analisi
-│   ├── services/              # API Services
+│   ├── components/               # Reusable UI components
+│   │   ├── ProductForm.tsx       # Add product form
+│   │   ├── ProductCard.tsx       # Single product card
+│   │   ├── ProductList.tsx       # Product list
+│   │   ├── FilterButtons.tsx     # Consumption status filters
+│   │   ├── MetricSelector.tsx    # Analytics metric selector
+│   │   ├── ConsumptionChart.tsx  # Consumption chart
+│   │   └── RankingListItem.tsx   # Product ranking item
+│   ├── hooks/                    # Custom React Hooks
+│   │   ├── useFridge.ts          # Fridge management hook
+│   │   └── useAnalytics.ts       # Analytics management hook
+│   ├── services/                 # API Services
 │   │   ├── api/
-│   │   │   ├── fridgeAPI.ts   # API frigorifero
-│   │   │   └── analyticsAPI.ts # API analisi
-│   │   └── index.ts           # Export services
-│   ├── utils/                 # Utility functions
-│   │   ├── analytics.ts       # Funzioni calcolo analisi
-│   │   └── formatting.ts      # Funzioni formattazione
-│   ├── constants/             # Configurazioni
-│   │   ├── config.ts          # Configurazione generale
-│   │   └── analytics.ts       # Costanti analisi
-│   ├── types/                 # TypeScript types
-│   │   └── index.ts           # Type definitions
-│   └── styles/                # Stili condivisi
-│       └── commonStyles.ts    # Stili globali
-├── assets/                    # Risorse statiche
-├── app.json                   # Expo configuration
-├── package.json               # Dependencies
-├── tsconfig.json              # TypeScript config
-└── .env                       # Environment variables
+│   │   │   ├── fridgeAPI.ts      # Fridge API
+│   │   │   └── analyticsAPI.ts   # Analytics API
+│   │   └── index.ts              # Service exports
+│   ├── utils/                    # Utility functions
+│   │   ├── analytics.ts          # Analytics calculation utilities
+│   │   └── formatting.ts         # Formatting utilities
+│   ├── constants/                # Configuration and constants
+│   │   ├── config.ts             # General configuration
+│   │   └── analytics.ts          # Analytics constants
+│   ├── types/                    # TypeScript types
+│   │   └── index.ts              # Type definitions
+│   └── styles/                   # Shared styles
+│       └── commonStyles.ts       # Global styles
+├── assets/                       # Static assets
+├── app.json                      # Expo configuration
+├── package.json                  # Dependencies
+├── tsconfig.json                 # TypeScript config
+└── .env                          # Environment variables
+
 ```
 
-## 🚀 Setup e Installazione
+## 🚀 Setup and Installation
 
-### Prerequisiti
-- Node.js 18+
-- npm o yarn
-- Expo CLI
-- Android Studio (per Android development)
-- Xcode (per iOS development, solo Mac)
+### Prerequisites
 
-### Installazione
+* Node.js 18+
+* npm or yarn
+* Expo CLI
+* Android Studio (for Android development)
+* Xcode (for iOS development, macOS only)
+
+### Installation
 
 ```bash
-# Clona il repository
+# Clone repository
 cd grocewise-frontend
 
-# Installa dipendenze
+# Install dependencies
 npm install
 
-# Configura ambiente
+# Configure environment
 cp .env.example .env
+
 ```
 
-### Configurazione Ambiente
+### Environment Configuration
 
-Modifica il file `.env`:
+Update the `.env` file:
 
 ```env
 API_BASE_URL=http://localhost:8000
+
 ```
 
-Per produzione, sostituisci con l'URL del backend reale.
+For production, replace this with your production backend URL.
 
-### Avvio Sviluppo
+### Starting Development
 
 ```bash
-# Avvia development server
+# Start development server
 npx expo start
 
-# Per Android
+# For Android
 npx expo start --android
 
-# Per iOS
+# For iOS
 npx expo start --ios
 
-# Per Web
+# For Web
 npx expo start --web
+
 ```
 
 ### Expo Go App
 
-Per testing rapido su dispositivo fisico:
+For fast testing on a physical device:
 
-1. Installa Expo Go dal Play Store/App Store
-2. Scansiona il QR code mostrato nel terminale
-3. L'app si ricaricherà automaticamente ad ogni salvataggio
+1. Install Expo Go from the Google Play Store or Apple App Store.
+2. Scan the QR code displayed in the terminal.
+3. The app will automatically reload whenever changes are saved.
 
-## 📱 Schermate e Funzionalità
+## 📱 Screens and Features
 
 ### Home Screen (Fridge Management)
 
-**Componenti principali:**
-- `ProductForm`: Form per aggiunta prodotti con scanner barcode
-- `FilterButtons`: Filtri per stato consumo (Tutti/Non Consumati/Consumati)
-- `ProductList`: Lista prodotti con card interattive
+**Main Components:**
 
-**Funzionalità:**
-- Scanner codici a barre con fotocamera
-- Aggiunta manuale barcode e prezzo
-- Selezione data acquisto
-- Consumo prodotti (totale o parziale)
-- Eliminazione prodotti
-- Navigazione a schermata analytics
+* `ProductForm`: Form to add products with an integrated barcode scanner
+* `FilterButtons`: Filters by consumption status (All / Unconsumed / Consumed)
+* `ProductList`: Product list with interactive cards
+
+**Features:**
+
+* Camera-based barcode scanner
+* Manual barcode and price entry
+* Purchase date selection
+* Product consumption (total or partial)
+* Product deletion
+* Navigation to the analytics screen
 
 ### Analytics Screen
 
-**Componenti principali:**
-- `MetricSelector`: Selettore metriche (Calorie, Proteine, Carboidrati, Grassi)
-- `ConsumptionChart`: Grafico temporale consumi
-- `RankingListItem`: Lista classifica prodotti
+**Main Components:**
 
-**Funzionalità:**
-- Visualizzazione grafici temporali
-- Cambio metrica analizzata
-- Filtraggio per singolo prodotto
-- Classifica prodotti migliori
-- Rimozione filtro prodotto
+* `MetricSelector`: Metric picker (Calories, Proteins, Carbohydrates, Fats)
+* `ConsumptionChart`: Temporal consumption chart
+* `RankingListItem`: Product ranking list item
 
-## 🧩 Componenti Principali
+**Features:**
+
+* Temporal chart visualization
+* Dynamic analyzed metric switching
+* Filtering by individual product
+* Top products efficiency ranking
+* Product filter reset
+
+## 🧩 Main Components
 
 ### ProductForm
 
-Gestisce l'aggiunta di nuovi prodotti:
+Manages product creation:
 
 **Features:**
-- Scanner barcode con `expo-camera`
-- Input manuale barcode
-- Input prezzo opzionale
-- DatePicker per data acquisto
-- Validazione input
-- Gestione permessi fotocamera
 
-**Stati:**
-- `barcode`: Codice a barre
-- `price`: Prezzo prodotto
-- `scanning`: Stato attivazione fotocamera
-- `buyDate`: Data acquisto
-- `showDatePicker`: Visibilità date picker
+* Barcode scanner via `expo-camera`
+* Manual barcode input
+* Optional price input
+* DatePicker for purchase date
+* Input validation
+* Camera permission handling
+
+**State:**
+
+* `barcode`: Product barcode
+* `price`: Product price
+* `scanning`: Camera active state
+* `buyDate`: Purchase date
+* `showDatePicker`: Date picker visibility
 
 ### ProductCard
 
-Card singolo prodotto con azioni:
+Single product card with actions:
 
 **Features:**
-- Display informazioni prodotto
-- Pulsante consumo
-- Pulsante eliminazione
-- Modal consumo parziale
-- Visualizzazione stato consumo
+
+* Product detail display
+* Consumption action button
+* Deletion action button
+* Partial consumption modal
+* Consumption status indicator
 
 ### FilterButtons
 
-Filtri per stato prodotti:
+Filters by product state:
 
-**Opzioni:**
-- "Tutti": Mostra tutti i prodotti
-- "Non Consumati": Solo prodotti disponibili
-- "Consumati": Solo storico consumi
+**Options:**
+
+* "All": Displays all items
+* "Unconsumed": Displays currently available products only
+* "Consumed": Displays consumed product history only
 
 ### ConsumptionChart
 
-Grafico temporale consumi:
+Temporal consumption chart:
 
-**Libreria:** react-native-chart-kit
+**Library:** `react-native-chart-kit`
 
 **Features:**
-- Line chart con dati temporali
-- Supporto multiple metriche
-- Responsive design
-- Colori personalizzati
+
+* Line chart with temporal data points
+* Multi-metric support
+* Responsive layout
+* Custom color palette
 
 ### RankingListItem
 
-Item nella classifica prodotti:
+Row item in the product efficiency ranking:
 
 **Features:**
-- Display posizione ranking
-- Informazioni prodotto
-- Punteggio calcolato
-- Interattività per dettagli
+
+* Ranking position indicator
+* Product details
+* Calculated score
+* Tap interaction for detailed inspection
 
 ## 🪝 Custom Hooks
 
 ### useFridge
 
-Hook per gestione stato frigorifero:
+Hook for fridge state management:
 
-**Stati:**
-- `products`: Lista prodotti
-- `loading`: Stato caricamento
-- `filterType`: Tipo filtro attivo
+**State:**
 
-**Funzioni:**
-- `loadProducts`: Carica prodotti dal backend
-- `addProduct`: Aggiunge nuovo prodotto
-- `consumeProduct`: Marca prodotto come consumato
-- `deleteProduct`: Elimina prodotto
-- `deleteAllProducts`: Elimina tutti i prodotti
+* `products`: Product list
+* `loading`: Loading state
+* `filterType`: Active filter type
 
-**Logica:**
-- Auto-refresh al cambio filtro
-- Error handling con Alert
-- Loading states
+**Functions:**
+
+* `loadProducts`: Fetches products from backend
+* `addProduct`: Adds a new product
+* `consumeProduct`: Marks a product as consumed
+* `deleteProduct`: Deletes a product
+* `deleteAllProducts`: Deletes all products
+
+**Logic:**
+
+* Auto-refresh on filter changes
+* Error handling with native `Alert`
+* Loading state handling
 
 ### useAnalytics
 
-Hook per gestione dati analitici:
+Hook for analytics data management:
 
-**Stati:**
-- `loading`: Stato caricamento
-- `rawData`: Dati grezzi consumi
-- `topProducts`: Classifica prodotti
-- `activeMetric`: Metrica attiva
+**State:**
 
-**Funzioni:**
-- `loadAnalytics`: Carica dati analitici
-- `setActiveMetric`: Cambia metrica visualizzata
+* `loading`: Loading state
+* `rawData`: Raw consumption data
+* `topProducts`: Product rankings
+* `activeMetric`: Currently active metric
 
-**Logica:**
-- Caricamento condizionale ranking
-- Filtraggio per prodotto selezionato
-- Calcolo labels e dataset
+**Functions:**
+
+* `loadAnalytics`: Fetches analytics datasets
+* `setActiveMetric`: Updates the active metric
+
+**Logic:**
+
+* Conditional ranking fetching
+* Filtering by selected product
+* Dynamic label and dataset generation
 
 ## 🔌 API Services
 
 ### FridgeAPI
 
-Servizio per comunicazioni API frigorifero:
+Service handling fridge communication endpoints:
 
-**Metodi:**
-- `getUnconsumedProducts()`: Recupera prodotti non consumati
-- `getConsumedProducts()`: Recupera prodotti consumati
-- `getAllProducts()`: Recupera tutti i prodotti
-- `addProduct(barcode, price, buy_date)`: Aggiunge prodotto
-- `consumeProduct(id, quantity, date)`: Consuma prodotto
-- `deleteProduct(id)`: Elimina prodotto
-- `deleteAllProducts()`: Elimina tutti
+**Methods:**
+
+* `getUnconsumedProducts()`: Retrieves unconsumed items
+* `getConsumedProducts()`: Retrieves consumed items
+* `getAllProducts()`: Retrieves all items
+* `addProduct(barcode, price, buy_date)`: Creates a product
+* `consumeProduct(id, quantity, date)`: Consumes a product
+* `deleteProduct(id)`: Removes a product
+* `deleteAllProducts()`: Removes all products
 
 ### AnalyticsAPI
 
-Servizio per comunicazioni API analisi:
+Service handling analytics endpoints:
 
-**Metodi:**
-- `getConsumptionAnalytics(startDate, endDate)`: Statistiche globali
-- `getSingleProductAnalytics(productId, startDate, endDate)`: Statistiche prodotto
+**Methods:**
+
+* `getConsumptionAnalytics(startDate, endDate)`: Fetches global aggregate metrics
+* `getSingleProductAnalytics(productId, startDate, endDate)`: Fetches single-product metrics
 
 ## 🎨 Styling
 
 ### commonStyles.ts
 
-Stili globali centralizzati:
+Centralized global design system:
 
-**Categorie:**
-- `colors`: Palette colori (primary, success, error, text, etc.)
-- `spacing`: Spaziature (xs, sm, md, lg, xl, xxl)
-- `typography`: Tipografia (small, body, subtitle, title)
-- `borderRadius`: Border radius (sm, md, lg, pill)
-- `shadows`: Effetti ombra (card, button)
+**Categories:**
 
-**Vantaggi:**
-- Consistenza visiva
-- Facile manutenzione
-- Theme switching ready
-- Type-safe
+* `colors`: Color palette (`primary`, `success`, `error`, `text`, etc.)
+* `spacing`: Layout scales (`xs`, `sm`, `md`, `lg`, `xl`, `xxl`)
+* `typography`: Font definitions (`small`, `body`, `subtitle`, `title`)
+* `borderRadius`: Border radii (`sm`, `md`, `lg`, `pill`)
+* `shadows`: Elevation presets (`card`, `button`)
 
-## 🔧 Configurazione
+**Benefits:**
+
+* Visual consistency
+* Straightforward maintenance
+* Theme switching readiness
+* Type safety
+
+## 🔧 Configuration
 
 ### app.json
 
-Configurazione Expo principale:
+Core Expo configuration:
 
-**Sezioni chiave:**
-- `expo.name`: Nome applicazione
-- `expo.slug`: URL slug
-- `expo.version`: Versione
-- `expo.orientation`: Orientamento supportato
-- `expo.plugins`: Plugin configurati (camera, etc.)
+**Key Sections:**
+
+* `expo.name`: Application name
+* `expo.slug`: URL slug
+* `expo.version`: Version
+* `expo.orientation`: Screen orientation settings
+* `expo.plugins`: Configured plugins (camera, etc.)
 
 ### tsconfig.json
 
-Configurazione TypeScript:
+TypeScript configuration:
 
-**Impostazioni:**
-- Strict mode abilitato
-- Path aliases
-- Target ES2020
-- Module resolution Node
+**Settings:**
 
-## 📊 Tipi TypeScript
+* Strict mode enabled
+* Path aliases
+* Target ES2020
+* Node module resolution
+
+## 📊 TypeScript Types
 
 ### Type Definitions
 
-**Tipi principali:**
+**Core Types:**
+
 ```typescript
 interface Product {
   db_id: string;
@@ -382,6 +414,7 @@ interface RankedProduct {
   score: number;
   scoreLabel: string;
 }
+
 ```
 
 ## 🧪 Testing
@@ -389,186 +422,204 @@ interface RankedProduct {
 ### Unit Tests
 
 ```bash
-# Installa dipendenze testing
+# Install testing dependencies
 npm install --save-dev jest @testing-library/react-native @testing-library/jest-native
 
-# Esegui tests
+# Run tests
 npm test
 
-# Con coverage
+# Run with coverage
 npm test -- --coverage
+
 ```
 
 ### E2E Tests
 
 ```bash
-# Installa Detox
+# Install Detox
 npm install --save-dev detox
 
 # Build test app
 detox build --configuration ios.sim.debug
 
-# Esegui tests
+# Run tests
 detox test --configuration ios.sim.debug
+
 ```
 
 ## 📱 Platform-Specific Considerations
 
 ### Android
 
-**Permessi richiesti:**
-- `CAMERA`: Per scanner barcode
-- `INTERNET`: Per chiamate API
+**Required Permissions:**
 
-**Configurazione:**
-- Aggiungi permessi in `android/app/src/main/AndroidManifest.xml`
-- Configura ProGuard se necessario
+* `CAMERA`: For barcode scanning
+* `INTERNET`: For network communication
+
+**Configuration:**
+
+* Declare permissions in `android/app/src/main/AndroidManifest.xml`
+* Configure ProGuard rules if necessary
 
 ### iOS
 
-**Permessi richiesti:**
-- `NSCameraUsageDescription`: Descrizione uso fotocamera
+**Required Permissions:**
 
-**Configurazione:**
-- Aggiungi permessi in `ios/Podfile`
-- Configura Info.plist
+* `NSCameraUsageDescription`: Camera access explanation
+
+**Configuration:**
+
+* Declare usage descriptions in `ios/Podfile` or `Info.plist`
 
 ### Web
 
-**Limitazioni:**
-- Camera support limitato
-- Alcune API React Native non disponibili
-- Performance inferiore rispetto a native
+**Limitations:**
 
-## 🔒 Sicurezza
+* Camera support is constrained by browser implementations
+* Selected native React Native APIs are unavailable
+* Lower overall performance compared to native targets
+
+## 🔒 Security
 
 ### Environment Variables
-- API URL in `.env` (non committare)
-- Nessuna hardcoded API key
-- Validazione input lato client
+
+* Store backend API URLs in `.env` (never commit secrets)
+* No hardcoded API keys in application source
+* Client-side input validation
 
 ### API Communication
-- HTTPS in produzione
-- Error handling appropriato
-- Sanitizzazione dati
+
+* Enforce HTTPS in production
+* Structured error handling
+* Payload sanitization
 
 ## 🚀 Deployment
 
 ### Expo Application Services (EAS)
 
 ```bash
-# Installa EAS CLI
+# Install EAS CLI
 npm install -g eas-cli
 
-# Login
+# Login to Expo
 eas login
 
-# Configura progetto
+# Configure project
 eas build:configure
 
-# Build per iOS
+# Build for iOS
 eas build --platform ios
 
-# Build per Android
+# Build for Android
 eas build --platform android
 
-# Submit agli store
+# Submit to stores
 eas submit --platform ios
 eas submit --platform android
+
 ```
 
 ### Web Deployment
 
 ```bash
-# Build web version
+# Build web production bundle
 npx expo export:web
 
-# Deploy su hosting (es. Vercel, Netlify)
-# Copia la cartella web-build
+# Deploy to hosting platforms (e.g., Vercel, Netlify)
+# Target output folder: web-build
+
 ```
 
 ## 🐛 Troubleshooting
 
 ### Metro Bundler Issues
+
 ```bash
-# Clear cache
+# Clear bundler cache
 npx expo start -c
 
-# Reset cache
+# Reset cache folder
 rm -rf node_modules/.cache
+
 ```
 
 ### Camera Not Working
-- Verifica permessi in device settings
-- Controlla configurazione app.json
-- Testa su device fisico (emulator potrebbe non supportare camera)
+
+* Verify camera permissions in system settings
+* Verify `app.json` plugin configurations
+* Test on a physical device (simulators often lack camera emulation)
 
 ### API Connection Issues
-- Verifica backend sia in esecuzione
-- Controlla API_BASE_URL in .env
-- Verifica connessione network
-- Controlla CORS configuration backend
+
+* Verify the backend server is running
+* Check `API_BASE_URL` in `.env` (use your local machine IP instead of `localhost` on mobile devices)
+* Check network connectivity across devices
+* Check CORS rules on the backend
 
 ### Build Failures
+
 ```bash
-# Clear node_modules
+# Clean node modules
 rm -rf node_modules
 npm install
 
 # Clear Expo cache
 expo r -c
 
-# Reinstall pods (iOS)
+# Reinstall iOS pods
 cd ios
 pod install
 cd ..
+
 ```
 
 ## 📈 Performance
 
-### Ottimizzazioni Implementate
-- Lazy loading delle schermate
-- Memoization con React.memo
-- Virtualized lists per liste lunghe
-- Image optimization
-- Code splitting automatico con Expo Router
+### Implemented Optimizations
+
+* Lazy screen loading
+* Memoization using `React.memo`
+* Virtualized lists for scalable collection rendering
+* Asset and image optimization
+* Automatic code splitting with Expo Router
 
 ### Best Practices
-- Evita re-render non necessari
-- Usa useCallback/useMemo appropriatamente
-- Ottimizza immagini
-- Minimizza bundle size
 
-## 🔮 Feature Future
+* Prevent unnecessary re-renders
+* Use `useCallback` and `useMemo` strategically
+* Optimize asset sizes
+* Keep the JavaScript bundle lightweight
 
-- [ ] Offline mode con cache locale
-- [ ] Push notifications per scadenze
-- [ ] Dark mode
-- [ ] Multi-lingua support (i18n)
-- [ ] Biometric authentication
-- [ ] Widget home screen
-- [ ] Share functionality
-- [ ] Advanced filtering e search
+## 🔮 Future Features
 
-## 🤝 Contributi
+* [ ] Offline mode with local storage synchronization
+* [ ] Push notifications for product expiration warnings
+* [ ] Dark mode support
+* [ ] Internationalization (i18n)
+* [ ] Biometric authentication
+* [ ] Home screen widgets
+* [ ] Social recipe/list sharing
+* [ ] Advanced full-text search and filtering
 
-Per contribuire al frontend:
+## 🤝 Contributing
 
-1. Segui React Native best practices
-2. Usa TypeScript per type safety
-3. Aggiungi unit tests per nuove funzionalità
-4. Segui lo stile esistente (commonStyles)
-5. Documenta componenti complessi
-6. Testa su multiple piattaforme
+Guidelines for contributing to the frontend:
 
-## 📚 Risorse Utili
+1. Adhere to React Native best practices.
+2. Use TypeScript strictly for type safety.
+3. Add unit tests for new functional code.
+4. Follow design conventions defined in `commonStyles.ts`.
+5. Provide clear documentation for complex UI components.
+6. Test across multiple deployment targets (iOS, Android, Web).
 
-- [Expo Documentation](https://docs.expo.dev/)
-- [React Native Documentation](https://reactnative.dev/)
-- [Expo Router](https://docs.expo.dev/router/introduction)
-- [React Native Chart Kit](https://github.com/indiespirit/react-native-chart-kit)
-- [Expo Camera](https://docs.expo.dev/versions/latest/sdk/camera/)
+## 📚 Useful Resources
 
-## 📄 Licenza
+* [Expo Documentation](https://docs.expo.dev/)
+* [React Native Documentation](https://reactnative.dev/)
+* [Expo Router](https://docs.expo.dev/router/introduction)
+* [React Native Chart Kit](https://github.com/indiespirit/react-native-chart-kit)
+* [Expo Camera](https://docs.expo.dev/versions/latest/sdk/camera/)
 
-MIT License - Vedi file LICENSE nella root del progetto
+## 📄 License
+
+MIT License - See the `LICENSE` file in the project root.

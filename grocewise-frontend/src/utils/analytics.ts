@@ -6,7 +6,7 @@ export const sortDates = (data: Record<string, DayStats>): string[] =>
 
 export const formatChartLabels = (dates: string[]): string[] =>
     dates.map((dateStr) =>
-        new Date(dateStr).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })
+        new Date(dateStr).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
     );
 
 export const extractDataset = (

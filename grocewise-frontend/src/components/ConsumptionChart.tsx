@@ -22,7 +22,7 @@ export const ConsumptionChart: React.FC<ConsumptionChartProps> = ({
     return (
         <View style={styles.container}>
             <Text style={[styles.title, { color: config.color }]}>
-                Andamento {config.label}
+                {config.label}
             </Text>
             <LineChart
                 data={{

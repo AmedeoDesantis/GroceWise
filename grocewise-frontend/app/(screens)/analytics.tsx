@@ -17,11 +17,11 @@ import {
 } from '../../src/constants/analytics';
 
 export default function AnalyticsScreen() {
-    // 1. Nuovo stato per memorizzare quale prodotto stiamo filtrando
+    // 1. New state to store which product we are filtering
     const [selectedBarcode, setSelectedBarcode] = useState<string | null>(null);
     const [isChatOpen, setIsChatOpen] = useState(false);
 
-    // 2. Passiamo l'ID al nostro hook
+    // 2. Pass the ID to our hook
     const {
         loading,
         rawData,
@@ -37,11 +37,11 @@ export default function AnalyticsScreen() {
         loadAnalytics();
     }, [loadAnalytics]);
 
-    // 3. Troviamo il nome del prodotto selezionato dalla classifica per mostrarlo nel titolo
+    // 3. Find the name of the selected product from the ranking to show in the title
     const selectedProductName = useMemo(() => {
         if (!selectedBarcode) return null;
         const product = topProducts.find(p => p.product.barcode === selectedBarcode);
-        return product ? product.product.name : 'Dettaglio Prodotto';
+        return product ? product.product.name : 'Product Detail';
     }, [selectedBarcode, topProducts]);
 
     if (loading && !rawData) {
@@ -58,36 +58,36 @@ export default function AnalyticsScreen() {
         <SafeAreaView style={styles.safeArea}>
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 
-                {/* INTESTAZIONE DINAMICA */}
+                {/* DYNAMIC HEADER */}
                 <View style={styles.headerContainer}>
                     <Text style={styles.title}>
-                        {selectedBarcode ? `Andamento: ${selectedProductName}` : 'Analisi Consumi Alimentari'}
+                        {selectedBarcode ? `Calories: ${selectedProductName}` : 'Food Consumption Analysis'}
                     </Text>
 
                     <View style={styles.headerButtons}>
-                        {/* BOTTONE RIMUOVI FILTRO */}
+                        {/* REMOVE FILTER BUTTON */}
                         {selectedBarcode && (
                             <TouchableOpacity
                                 style={styles.clearFilterButton}
                                 onPress={() => setSelectedBarcode(null)}
                             >
-                                <Text style={styles.clearFilterText}>✕ Rimuovi filtro</Text>
+                                <Text style={styles.clearFilterText}>✕ Remove filter</Text>
                             </TouchableOpacity>
                         )}
 
-                        {/* BOTTONE ASSISTENTE AI */}
+                        {/* AI ASSISTANT BUTTON */}
                         <TouchableOpacity
                             style={styles.chatButton}
                             onPress={() => setIsChatOpen(true)}
                         >
-                            <Text style={styles.chatButtonText}>Assistente</Text>
+                            <Text style={styles.chatButtonText}>AI Assistant</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
 
                 <MetricSelector activeMetric={activeMetric} onMetricChange={setActiveMetric} />
 
-                {/* Mostra il caricamento grafico quando si cambia prodotto */}
+                {/* Show chart loading when changing product */}
                 {loading ? (
                     <View style={{ height: 200, justifyContent: 'center' }}>
                         <ActivityIndicator color={colors.primary} />
@@ -95,16 +95,16 @@ export default function AnalyticsScreen() {
                 ) : hasData ? (
                     <ConsumptionChart labels={labels} dataset={dataset} metric={activeMetric} />
                 ) : (
-                    <Text style={styles.emptyText}>Nessun dato registrato.</Text>
+                    <Text style={styles.emptyText}>No data recorded.</Text>
                 )}
 
-                {/* --- SEZIONE CLASSIFICA --- */}
+                {/* --- RANKING SECTION --- */}
                 {topProducts && topProducts.length > 0 && (
                     <View style={styles.rankingSection}>
-                        <Text style={styles.sectionTitle}>I Tuoi Migliori Alleati</Text>
+                        <Text style={styles.sectionTitle}>Best to Buy</Text>
 
                         {topProducts.map((item, index) => {
-                            // Capiamo se questo è il prodotto attualmente cliccato
+                            // Check if this is the currently clicked product
                             const isSelected = item.product.barcode === selectedBarcode;
 
                             return (
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     safeArea: { flex: 1, backgroundColor: colors.background },
     container: { flex: 1, padding: spacing.lg },
 
-    // Header dinamico
+    // Dynamic header
     headerContainer: {
         alignItems: 'center',
         marginBottom: spacing.md,

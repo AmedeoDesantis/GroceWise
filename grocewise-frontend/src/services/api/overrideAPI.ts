@@ -16,7 +16,7 @@ class OverrideAPI {
         try {
             await this.api.patch(`/overrides/product/${override.barcode}`, override);
         } catch (error) {
-            console.error('Errore nel salvataggio dell\'override:', error);
+            console.error('Error saving override:', error);
             throw error;
         }
     }

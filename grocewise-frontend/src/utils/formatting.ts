@@ -1,24 +1,24 @@
 /**
- * Formatta una data nel formato locale italiano
+ * Format a date in local English format
  */
 export const formatDate = (dateString?: string): string => {
     if (!dateString) return '';
     try {
-        return new Date(dateString).toLocaleDateString('it-IT');
+        return new Date(dateString).toLocaleDateString('en-US');
     } catch {
         return dateString;
     }
 };
 
 /**
- * Formatta un prezzo con il simbolo dell'euro
+ * Format a price with euro symbol
  */
 export const formatPrice = (price: number): string => {
     return `€${price.toFixed(2)}`;
 };
 
 /**
- * Formatta ingredienti mostrando i primi N e "..."
+ * Format ingredients showing first N and "..."
  */
 export const formatIngredients = (ingredients?: string[], maxItems: number = 3): string => {
     if (!ingredients || ingredients.length === 0) return '';

@@ -14,30 +14,30 @@ class ChatService {
         } catch (error) {
 
             if (error instanceof ServerOverloadedError) {
-                console.warn('Server Occupato. Attendo 10 secondi per il retry...');
+                console.warn('Server busy. Waiting 10 seconds for retry...');
                 await sleep(10000);
 
                 try {
                     return await this.processChatRound(messages);
                 } catch (retryError) {
-                    console.error('Fallito anche il retry:', retryError);
+                    console.error('Retry also failed:', retryError);
                     return getSimulatedResponse(messages);
                 }
             }
 
             if (error instanceof QuotaExceededError) {
-                console.warn('Chiamate API terminate. Passaggio immediato al simulatore offline.');
+                console.warn('API calls exhausted. Switching immediately to offline simulator.');
                 return getSimulatedResponse(messages);
             }
 
-            console.error('Errore imprevisto in ChatService:', error);
+            console.error('Unexpected error in ChatService:', error);
             return getSimulatedResponse(messages);
         }
     }
 
     /**
-     * Contiene l'intero flusso di logica del singolo round (Flash -> Tool -> Pro)
-     * Isolato qui per poter essere richiamato facilmente durante il retry.
+     * Contains the entire logic flow of a single round (Flash -> Tool -> Pro)
+     * Isolated here to be easily called during retry.
      */
     private async processChatRound(messages: ChatMessage[]): Promise<ChatResponse> {
         const contents = messages
@@ -104,11 +104,11 @@ class ChatService {
                         const id = await FridgeAPI.addProduct(call.args?.barcode, call.args?.price, call.args?.buyDate);
                         return { productId: id, success: true };
                     default:
-                        return { error: 'Tool non supportato' };
+                        return { error: 'Tool not supported' };
                 }
             } catch (error) {
-                console.error(`Errore nell'esecuzione del tool ${call.name}:`, error);
-                return { error: 'Fallimento esecuzione tool' };
+                console.error(`Error executing tool ${call.name}:`, error);
+                return { error: 'Tool execution failed' };
             }
         }));
     }
@@ -129,7 +129,7 @@ class ChatService {
 
     private isGoodResponse(message: string): boolean {
         if (message.length < 50) return false;
-        const uncertainPhrases = ['non sono sicuro', 'non ho informazioni', 'non posso aiutare', 'mi dispiace ma'];
+        const uncertainPhrases = ['not sure', 'no information', 'cannot help', 'sorry but'];
         return !uncertainPhrases.some(phrase => message.toLowerCase().includes(phrase));
     }
 }
