@@ -1,0 +1,6 @@
+fastapi
+openfoodfacts
+pydantic
+pymongo
+python-dotenv
+uvicorn[standard]
