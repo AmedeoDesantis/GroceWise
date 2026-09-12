@@ -125,14 +125,6 @@ OPENFOODFACTS_USERNAME=your_username
 OPENFOODFACTS_PASSWORD=your_password
 ```
 
-### Avvio MongoDB
-
-```bash
-docker-compose up -d
-```
-
-Questo avvia un container MongoDB con le credenziali specificate nel `.env`.
-
 ### Avvio Server
 
 ```bash
