@@ -10,7 +10,16 @@ export interface ChatResponse {
         completion_tokens: number;
         total_tokens: number;
     };
-    modelUsed?: string;
-    isFallback?: boolean;
-    functionCalls?: any[];
+    modelUsed: string;
+    isFallback: boolean;
+    functionCalls?: ToolCall[];
+}
+
+export interface ChatRequest {
+    messages: ChatMessage[];
+}
+
+export interface ToolCall {
+    name: string;
+    args: Record<string, any>;
 }

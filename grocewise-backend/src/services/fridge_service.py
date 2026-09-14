@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from sympy import Product
 from src.core.repositories.product_repository import ProductRepository
 from src.core.factories.product_factory import ProductFactory
 
@@ -8,15 +10,15 @@ class FridgeService:
         self.repository = repository
         self.factory = factory
 
-    def get_all_products(self) -> list:
+    def get_all_products(self) -> list[Product]:
         return self.repository.get_all_products()
 
-    def get_all_unconsumed_products(self) -> list:
+    def get_all_unconsumed_products(self) -> list[Product]:
         """Recupera tutti i prodotti non ancora consumati (finish_date is None)"""
         all_products = self.repository.get_all_products()
         return [p for p in all_products if p.finish_date is None]
     
-    def get_all_consumed_products(self) -> list:
+    def get_all_consumed_products(self) -> list[Product]:
         """Recupera tutti i prodotti già consumati (finish_date is not None)"""
         all_products = self.repository.get_all_products()
         return [p for p in all_products if p.finish_date is not None]

@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.endpoints.fridge_endpoint import router as fridge_router 
 from src.endpoints.analytics_endpoint import router as analytics_router
 from src.endpoints.override_endpoint import router as override_router
+from src.endpoints.chat_endpoint import router as chat_router
 
 app = FastAPI(
     title="GroceWise API",
@@ -21,6 +22,7 @@ app.add_middleware(
 app.include_router(fridge_router)
 app.include_router(analytics_router)
 app.include_router(override_router) 
+app.include_router(chat_router)
 
 @app.get("/health", tags=["System"])
 def health_check():

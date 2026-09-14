@@ -1,61 +1,56 @@
+import os
 from src.core.mongo import MongoDB
 from src.core.factories.product_factory import ProductFactory
 from src.core.factories.day_stat_factory import DayStatsFactory
 from src.core.repositories.product_repository import ProductRepository
 from src.services.fridge_service import FridgeService
 from src.services.analytics_service import AnalyticsService
+from src.services.chat_service import ChatService
+from src.infrastructure.agents.gemini.gemini_gateway import GeminiGateway
+from src.infrastructure.agents.gemini.gemini_adapter import GeminiAdapter
 from src.services.override_service import OverrideService
 from src.core.repositories.override_repository import OverrideRepository
+from src.infrastructure.agents.tool_wrapper import ToolWrapper
 
 class AppContainer:
-    """
-    Composition Root dell'applicazione GroceWise.
-    Si occupa di centralizzare l'inizializzazione dei componenti software
-    e di risolvere l'albero delle dipendenze di tutti gli strati.
-    """
     _mongo_client = MongoDB()
-
-    @classmethod
-    def get_mongo_client(cls) -> MongoDB:
-        """Restituisce l'istanza condivisa e sicura del client MongoDB"""
-        return cls._mongo_client
+    _fridge_service: FridgeService | None = None
+    _analytics_service: AnalyticsService | None = None
+    _chat_service: ChatService | None = None
     
-    @classmethod
-    def get_product_factory(cls) -> ProductFactory:
-        """Restituisce l'istanza condivisa e sicura della factory dei prodotti"""
-        override_repository = OverrideRepository(mongo_client=cls._mongo_client)
-        return ProductFactory(override_repository=override_repository)
 
     @classmethod
     def get_fridge_service(cls) -> FridgeService:
-        """
-        Assemblatore (Provider) per il servizio del frigo.
-        Costruisce l'albero delle dipendenze partendo dal basso (Infrastruttura)
-        fino all'alto (Dominio/Servizio).
-        """
-        factory = AppContainer.get_product_factory()
-        repository = ProductRepository(mongo_client=cls._mongo_client, factory=factory)
-        return FridgeService(repository=repository, factory=factory)
-    
-    @classmethod
-    def get_analytics_service(cls) -> AnalyticsService:
-        """
-        Assemblatore (Provider) per il servizio di analisi dei consumi.
-        Costruisce l'albero delle dipendenze partendo dal basso (Infrastruttura)
-        fino all'alto (Dominio/Servizio).
-        """
-        factory = DayStatsFactory()
-        product_factory = AppContainer.get_product_factory()
-        repository = ProductRepository(mongo_client=cls._mongo_client, factory=product_factory)
-        return AnalyticsService(repository=repository, day_stat_factory=factory)
+        if cls._fridge_service is None:
+            factory = ProductFactory(override_repository = OverrideRepository(mongo_client=cls._mongo_client))
+            repo = ProductRepository(mongo_client=cls._mongo_client, factory=factory)
+            cls._fridge_service = FridgeService(repository=repo, factory=factory)
+        return cls._fridge_service
 
     @classmethod
     def get_override_service(cls) -> OverrideService:
-        """
-        Assemblatore (Provider) per il servizio di gestione degli override.
-        Costruisce l'albero delle dipendenze partendo dal basso (Infrastruttura)
-        fino all'alto (Dominio/Servizio).
-        """
-        
-        repository = OverrideRepository(mongo_client=cls._mongo_client)
-        return OverrideService(override_repository=repository)
+        if cls._override_service is None:
+            repo = OverrideRepository(mongo_client=cls._mongo_client)
+            cls._override_service = OverrideService(override_repository=repo)
+        return cls._override_service
+
+    @classmethod
+    def get_analytics_service(cls) -> AnalyticsService:
+        if cls._analytics_service is None:
+            factory = ProductFactory(override_repository = OverrideRepository(mongo_client=cls._mongo_client))
+            stats_factory = DayStatsFactory()
+            repo = ProductRepository(mongo_client=cls._mongo_client, factory=factory)
+            cls._analytics_service = AnalyticsService(repository=repo, day_stat_factory=stats_factory)
+        return cls._analytics_service
+
+    @classmethod
+    def get_chat_service(cls) -> ChatService:
+        if cls._chat_service is None:
+            fridge = cls.get_fridge_service()
+            analytics = cls.get_analytics_service()
+
+            cls._chat_service = ChatService(
+                gateway = GeminiGateway(),
+                tool_wrapper = ToolWrapper(fridge_service=fridge, analytics_service=analytics)
+            )
+        return cls._chat_service

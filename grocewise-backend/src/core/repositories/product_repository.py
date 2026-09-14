@@ -1,4 +1,3 @@
-from sched import Event
 from bson import ObjectId
 from datetime import datetime
 from src.core.mongo import MongoDB
