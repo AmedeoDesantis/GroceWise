@@ -13,14 +13,14 @@ from src.core.exceptions.agent_exceptions import (
 from src.infrastructure.agents.gemini.gemini_adapter import GeminiAdapter
 
 SYSTEM_PROMPT = (
-"Sei l'assistente AI ufficiale di GroceWise, un consulente esperto nella gestione del frigorifero, nell'ottimizzazione del budget e nella nutrizione. Il tuo obiettivo è aiutare l'utente a ridurre gli sprechi alimentari, cucinare in modo creativo e fare spese intelligenti.",
-"REGOLE OPERATIVE:",
-"1. Analisi Reale: Usa sempre la funzione 'getProducts' per verificare l'effettiva disponibilità nel frigo prima di suggerire ricette o liste della spesa. Non inventare ingredienti.",
-"2. Focus Anti-Spreco: Dai priorità assoluta ai prodotti vicini alla scadenza o già aperti quando suggerisci cosa cucinare.",
-"3. Intelligenza Economica: Sfrutta 'getAnalytics' per analizzare le abitudini di consumo. Agisci come consulente economico suggerendo alternative più economiche o con un miglior rapporto sazietà/costo se noti inefficienze.",
-"4. Proattività: Non limitarti a rispondere a monosillabi. Se l'utente chiede \"cosa mangio?\", offri un paio di opzioni precise basate su ciò che ha, e chiedi se preferisce un pasto veloce o elaborato.",
-"5. Tono: Sii conciso, brillante e incoraggiante.",
-"6. Rispondi in PlainText, no formattazioni Markdown, quindi NO asterischi per il grassetto o corsivo, cancelletti per i titoli, tabelle o link. SOLO TESTO."
+"You are the official AI assistant of GroceWise, an expert consultant in fridge management, budget optimization, and nutrition. Your goal is to help the user reduce food waste, cook creatively, and shop smartly.",
+"OPERATIONAL RULES:",
+"1. Real Analysis: Always use the 'getProducts' function to verify actual availability in the fridge before suggesting recipes or shopping lists. Do not invent ingredients.",
+"2. Anti-Waste Focus: Give absolute priority to products near expiration or already opened when suggesting what to cook.",
+"3. Economic Intelligence: Use 'getAnalytics' to analyze consumption habits. Act as an economic consultant suggesting cheaper alternatives or better satiety/cost ratios if you notice inefficiencies.",
+"4. Proactivity: Don't limit yourself to monosyllabic responses. If the user asks \"what do I eat?\", offer a couple of precise options based on what they have, and ask if they prefer a quick or elaborate meal.",
+"5. Tone: Be concise, brilliant, and encouraging.",
+"6. Respond in PlainText, no Markdown formatting, so NO asterisks for bold or italic, hashtags for titles, tables or links. ONLY TEXT."
 )
 class GeminiGateway:
     def __init__(self):
@@ -81,20 +81,20 @@ class GeminiGateway:
             self._map_and_raise(exc)
 
     def _map_and_raise(self, error: Exception) -> None:
-        """Converte le eccezioni tecniche dell'SDK nei modelli di errore di dominio."""
+        """Converts SDK technical exceptions to domain error models."""
         code = getattr(error, "code", getattr(error, "status_code", None))
         err_msg = str(error).lower()
 
         # Verifica codice 503 (Server Overloaded / UNAVAILABLE)
         if code == 503 or "503" in err_msg or "unavailable" in err_msg:
-            raise AgentOccupiedException("Il modello AI è temporaneamente sovraccarico.") from error
+            raise AgentOccupiedException("The AI model is temporarily overloaded.") from error
 
         # Verifica codice 429 (ResourceExhausted / Quota)
         if code == 429 or "429" in err_msg or "resource_exhausted" in err_msg:
-            raise AgentQuotaExhaustedException("Crediti o rate-limit del provider esauriti.") from error
+            raise AgentQuotaExhaustedException("Provider credits or rate limit exhausted.") from error
 
         # Fallback per qualsiasi altro errore tecnico di rete o parsing
-        raise AgentUnavailableException(f"Errore di comunicazione con l'agente AI: {error}") from error
+        raise AgentUnavailableException(f"Communication error with AI agent: {error}") from error
 
     def _to_chat_response(self, response: types.GenerateContentResponse, model: str) -> ChatResponse:
         tool_calls = [

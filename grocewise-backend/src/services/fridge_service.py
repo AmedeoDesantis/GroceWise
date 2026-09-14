@@ -14,12 +14,12 @@ class FridgeService:
         return self.repository.get_all_products()
 
     def get_all_unconsumed_products(self) -> list[Product]:
-        """Recupera tutti i prodotti non ancora consumati (finish_date is None)"""
+        """Retrieves all products not yet consumed (finish_date is None)"""
         all_products = self.repository.get_all_products()
         return [p for p in all_products if p.finish_date is None]
     
     def get_all_consumed_products(self) -> list[Product]:
-        """Recupera tutti i prodotti già consumati (finish_date is not None)"""
+        """Retrieves all products already consumed (finish_date is not None)"""
         all_products = self.repository.get_all_products()
         return [p for p in all_products if p.finish_date is not None]
     
@@ -28,7 +28,7 @@ class FridgeService:
     ) -> str:
         product = self.factory.build_from_barcode(barcode, price, buy_date, finish_date)
         if not product:
-            raise ValueError(f"Impossibile creare un prodotto dal barcode: {barcode}")
+            raise ValueError(f"Unable to create a product from barcode: {barcode}")
 
         return self.repository.add_product(product)
 

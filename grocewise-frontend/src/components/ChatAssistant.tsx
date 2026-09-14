@@ -17,7 +17,7 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
             role: 'assistant',
-            content: 'Ciao! Sono il tuo assistente GroceWise. Posso aiutarti a gestire i prodotti nel frigo, suggerire ricette o analizzare i consumi. Come posso aiutarti?',
+            content: 'Hello! I am your GroceWise assistant. I can help you manage products in the fridge, suggest recipes, or analyze consumption. How can I help you?',
         },
     ]);
     const [inputText, setInputText] = useState('');
@@ -53,10 +53,10 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
             setToolCalls(response.functionCalls || []);
             setStatus('success');
         } catch (error) {
-            console.error('Errore chat:', error);
+            console.error('Chat error:', error);
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: 'Ops, non riesco a raggiungere i miei server al momento. Controlla la connessione e riprova.'
+                content: 'Oops, I cannot reach my servers at the moment. Check your connection and try again.'
             }]);
             setStatus('error');
         }
@@ -65,7 +65,7 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
     const clearChat = () => {
         setMessages([{
             role: 'assistant',
-            content: 'Ciao! Sono il tuo assistente GroceWise. Posso aiutarti a gestire i prodotti nel frigo, suggerire ricette o analizzare i consumi. Come posso aiutarti?',
+            content: 'Hello! I am your GroceWise assistant. I can help you manage products in the fridge, suggest recipes, or analyze consumption. How can I help you?',
         }]);
         setStatus('idle');
         setModelUsed('');
@@ -86,11 +86,11 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
                 </View>
                 <View style={styles.headerButtons}>
                     <TouchableOpacity onPress={clearChat} style={styles.headerButton}>
-                        <Text style={styles.headerButtonText}>Pulisci</Text>
+                        <Text style={styles.headerButtonText}>Clear</Text>
                     </TouchableOpacity>
                     {onClose && (
                         <TouchableOpacity onPress={onClose} style={styles.headerButton}>
-                            <Text style={styles.headerButtonText}>Chiudi</Text>
+                            <Text style={styles.headerButtonText}>Close</Text>
                         </TouchableOpacity>
                     )}
                 </View>
@@ -99,14 +99,14 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
             {modelUsed !== '' && (
                 <View style={[styles.modelInfo, isFallback && styles.modelInfoFallback]}>
                     <Text style={[styles.modelInfoText, isFallback && styles.modelInfoTextFallback]}>
-                        {isFallback ? 'Modalità Offline (Simulata)' : `AI Engine: ${modelUsed}`}
+                        {isFallback ? 'Offline Mode (Simulated)' : `AI Engine: ${modelUsed}`}
                     </Text>
                 </View>
             )}
 
             {toolCalls.length > 0 && (
                 <View style={styles.toolCallsInfo}>
-                    <Text style={styles.toolCallsTitle}>⚡ Azioni eseguite:</Text>
+                    <Text style={styles.toolCallsTitle}>⚡ Actions executed:</Text>
                     {toolCalls.map((call, idx) => (
                         <Text key={idx} style={styles.toolCallText}>• {call.name}</Text>
                     ))}
@@ -142,7 +142,7 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
                     style={styles.input}
                     value={inputText}
                     onChangeText={setInputText}
-                    placeholder="Chiedimi una ricetta o i consumi..."
+                    placeholder="Ask me for a recipe or consumption data..."
                     placeholderTextColor={colors.textSecondary}
                     multiline
                     maxLength={500}
@@ -153,7 +153,7 @@ export default function ChatAssistant({ onClose }: ChatAssistantProps) {
                     style={[styles.sendButton, (!inputText.trim() || status === 'loading') && styles.sendButtonDisabled]}
                     disabled={!inputText.trim() || status === 'loading'}
                 >
-                    <Text style={styles.sendButtonText}>Invia</Text>
+                    <Text style={styles.sendButtonText}>Send</Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>

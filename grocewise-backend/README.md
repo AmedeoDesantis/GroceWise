@@ -1,10 +1,10 @@
 # GroceWise Backend
 
-Backend API per GroceWise - Sistema di gestione intelligente dell'inventario alimentare costruito con FastAPI e MongoDB.
+Backend API for GroceWise - Intelligent food inventory management system built with FastAPI and MongoDB.
 
-## 📋 Panoramica
+## 📋 Overview
 
-Il backend fornisce un'API RESTful per la gestione dei prodotti alimentari, il tracciamento dei consumi e l'analisi delle statistiche nutrizionali. Segue i principi della Clean Architecture con separazione chiara dei livelli.
+The backend provides a RESTful API for food product management, consumption tracking, and nutritional statistics analysis. It follows Clean Architecture principles with clear layer separation.
 
 ## 🏗️ Architettura
 
@@ -35,26 +35,26 @@ Il backend fornisce un'API RESTful per la gestione dei prodotti alimentari, il t
 ### Design Patterns Implementati
 
 **Dependency Injection Container**
-- `AppContainer` centralizza la gestione delle dipendenze
-- Fornisce istanze singleton di servizi e repository
-- Facilita testing e manutenzione
+- `AppContainer` centralizes dependency management
+- Provides singleton instances of services and repositories
+- Facilitates testing and maintenance
 
 **Repository Pattern**
-- `ProductRepository` astrae l'accesso ai dati MongoDB
-- Operazioni CRUD standardizzate
-- Facile mocking per unit testing
+- `ProductRepository` abstracts MongoDB data access
+- Standardized CRUD operations
+- Easy mocking for unit testing
 
 **Factory Pattern**
-- `ProductFactory`: Costruzione prodotti da barcode OpenFoodFacts
-- `DayStatsFactory`: Creazione statistiche dai dati grezzi
-- Incapsula logica di trasformazione complessa
+- `ProductFactory`: Product construction from OpenFoodFacts barcodes
+- `DayStatsFactory`: Statistics creation from raw data
+- Encapsulates complex transformation logic
 
 **Service Layer Pattern**
-- `FridgeService`: Logica business gestione frigorifero
-- `AnalyticsService`: Calcolo statistiche consumi
-- Separazione tra API e logica di dominio
+- `FridgeService`: Fridge management business logic
+- `AnalyticsService`: Consumption statistics calculation
+- Separation between API and domain logic
 
-## 📁 Struttura del Progetto
+## 📁 Project Structure
 
 ```
 grocewise-backend/
@@ -63,55 +63,55 @@ grocewise-backend/
 │   │   ├── containers/
 │   │   │   └── app_container.py  # Dependency Injection Container
 │   │   ├── factories/
-│   │   │   ├── product_factory.py # Factory prodotti OpenFoodFacts
-│   │   │   └── day_stat_factory.py # Factory statistiche
+│   │   │   ├── product_factory.py # OpenFoodFacts product factory
+│   │   │   └── day_stat_factory.py # Statistics factory
 │   │   ├── models/
-│   │   │   ├── product.py        # Modello Prodotto
-│   │   │   └── stats.py          # Modello Statistiche
+│   │   │   ├── product.py        # Product Model
+│   │   │   └── stats.py          # Statistics Model
 │   │   ├── repositories/
-│   │   │   └── product_repository.py # Repository MongoDB
+│   │   │   └── product_repository.py # MongoDB Repository
 │   │   └── mongo.py              # MongoDB Client wrapper
 │   ├── endpoints/                # API Endpoints
-│   │   ├── fridge_endpoint.py    # Endpoints gestione frigo
-│   │   └── analytics_endpoint.py # Endpoints analisi
+│   │   ├── fridge_endpoint.py    # Fridge management endpoints
+│   │   └── analytics_endpoint.py # Analytics endpoints
 │   ├── services/                 # Business Logic
-│   │   ├── fridge_service.py     # Servizio gestione prodotti
-│   │   └── analytics_service.py  # Servizio analisi consumi
+│   │   ├── fridge_service.py     # Product management service
+│   │   └── analytics_service.py  # Consumption analysis service
 │   └── main.py                   # Application entry point
 ├── .env                          # Variabili ambiente
 ├── docker-compose.yaml           # MongoDB configuration
 └── requirements.txt              # Python dependencies
 ```
 
-## 🚀 Setup e Installazione
+## 🚀 Setup and Installation
 
-### Prerequisiti
+### Prerequisites
 - Python 3.12+
 - Docker & Docker Compose
 - pip
 
-### Installazione
+### Installation
 
 ```bash
-# Clona il repository
+# Clone the repository
 cd grocewise-backend
 
-# Crea ambiente virtuale
+# Create virtual environment
 python -m venv venv
 
-# Attiva ambiente virtuale
-# Su Windows:
+# Activate virtual environment
+# On Windows:
 venv\Scripts\activate
-# Su Linux/Mac:
+# On Linux/Mac:
 source venv/bin/activate
 
-# Installa dipendenze
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### Configurazione Ambiente
+### Environment Configuration
 
-Crea file `.env` nella root del progetto:
+Create `.env` file in the project root:
 
 ```env
 # MongoDB Configuration
@@ -125,21 +125,21 @@ OPENFOODFACTS_USERNAME=your_username
 OPENFOODFACTS_PASSWORD=your_password
 ```
 
-### Avvio Server
+### Starting the Server
 
 ```bash
-# Modalità sviluppo (con hot reload)
+# Development mode (with hot reload)
 uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 
-# Modalità produzione
+# Production mode
 uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
-L'API sarà disponibile su `http://localhost:8000`
+The API will be available at `http://localhost:8000`
 
-### Documentazione API
+### API Documentation
 
-Una volta avviato il server, accedi a:
+Once the server is started, access:
 - **Swagger UI**: `http://localhost:8000/docs`
 - **ReDoc**: `http://localhost:8000/redoc`
 
@@ -165,28 +165,28 @@ Response:
 ```http
 GET /fridge/products/unconsumed
 ```
-Response: Array di prodotti non consumati
+Response: Array of unconsumed products
 
 #### Get Consumed Products
 ```http
 GET /fridge/products/consumed
 ```
-Response: Array di prodotti consumati
+Response: Array of consumed products
 
 #### Get All Products
 ```http
 GET /fridge/products/all
 ```
-Response: Tutti i prodotti nel database
+Response: All products in the database
 
 #### Add Product
 ```http
 POST /fridge/products?barcode={barcode}&price={price}&buy_date={buy_date}
 ```
 Parameters:
-- `barcode` (required): Codice a barre del prodotto (8-13 caratteri)
-- `price` (optional): Prezzo del prodotto (default: 0.0)
-- `buy_date` (optional): Data acquisto in formato ISO (default: now)
+- `barcode` (required): Product barcode (8-13 characters)
+- `price` (optional): Product price (default: 0.0)
+- `buy_date` (optional): Purchase date in ISO format (default: now)
 
 Response:
 ```json
@@ -201,9 +201,9 @@ Response:
 POST /fridge/products/{product_id}/consume?consumed_at={consumed_at}&quantity={quantity}
 ```
 Parameters:
-- `product_id` (required): ID MongoDB del prodotto (24 caratteri)
-- `consumed_at` (optional): Data consumo (default: now)
-- `quantity` (optional): Quantità in grammi (se omessa consuma tutto)
+- `product_id` (required): MongoDB product ID (24 characters)
+- `consumed_at` (optional): Consumption date (default: now)
+- `quantity` (optional): Quantity in grams (if omitted, consumes everything)
 
 Response:
 ```json
@@ -244,8 +244,8 @@ Response:
 GET /analytics/consumption?start_date={start_date}&end_date={end_date}
 ```
 Parameters:
-- `start_date` (required): Data inizio formato YYYY-MM-DD
-- `end_date` (required): Data fine formato YYYY-MM-DD
+- `start_date` (required): Start date in YYYY-MM-DD format
+- `end_date` (required): End date in YYYY-MM-DD format
 
 Response:
 ```json
@@ -266,17 +266,17 @@ Response:
 GET /analytics/consumption/{barcode}?start_date={start_date}&end_date={end_date}
 ```
 Parameters:
-- `barcode` (required): Codice a barre del prodotto
-- `start_date` (required): Data inizio formato YYYY-MM-DD
-- `end_date` (required): Data fine formato YYYY-MM-DD
+- `barcode` (required): Product barcode
+- `start_date` (required): Start date in YYYY-MM-DD format
+- `end_date` (required): End date in YYYY-MM-DD format
 
-Response: Stesso formato dell'endpoint globale ma filtrato per prodotto
+Response: Same format as the global endpoint but filtered by product
 
-## 🧩 Componenti Principali
+## 🧩 Main Components
 
 ### AppContainer (Dependency Injection)
 
-Centralizza la creazione e gestione delle dipendenze:
+Centralizes creation and management of dependencies:
 
 ```python
 class AppContainer:
@@ -289,75 +289,75 @@ class AppContainer:
         return FridgeService(repository=repository, factory=factory)
 ```
 
-**Vantaggi:**
-- Controllo centralizzato delle dipendenze
-- Facilità di testing (mocking semplice)
-- Gestione lifecycle delle istanze
-- Single source of truth per configurazione
+**Advantages:**
+- Centralized dependency control
+- Ease of testing (simple mocking)
+- Instance lifecycle management
+- Single source of truth for configuration
 
 ### ProductFactory
 
-Gestisce la creazione di prodotti da diverse fonti:
+Manages product creation from different sources:
 
-**Metodo `build_from_barcode`:**
-- Interroga OpenFoodFacts API
-- Estrae dati nutrizionali e informazioni prodotto
-- Localizza nome prodotto (priorità: italiano, inglese, francese, tedesco)
-- Gestisce errori e fallback
+**Method `build_from_barcode`:**
+- Queries OpenFoodFacts API
+- Extracts nutritional data and product information
+- Localizes product name (priority: English, Italian, French, German)
+- Handles errors and fallbacks
 
-**Metodo `build_from_dict`:**
-- Ricostruisce oggetti Product da MongoDB
-- Gestisce migrazione dati legacy
-- Calcola remaining_quantity per documenti vecchi
+**Method `build_from_dict`:**
+- Reconstructs Product objects from MongoDB
+- Handles legacy data migration
+- Calculates remaining_quantity for old documents
 
 ### ProductRepository
 
-Implementa il Repository Pattern per accesso dati MongoDB:
+Implements the Repository Pattern for MongoDB data access:
 
-**Operazioni principali:**
-- `add_product`: Inserisce nuovo prodotto
-- `get_by_id`: Recupera prodotto per ID
-- `get_all_products`: Recupera tutti i prodotti
-- `get_products_by_date_range`: Filtra per intervallo date
-- `consume_product`: Gestisce consumo (totale/parziale)
-- `delete_product`: Elimina prodotto
-- `delete_all`: Elimina tutti i prodotti
+**Main operations:**
+- `add_product`: Inserts new product
+- `get_by_id`: Retrieves product by ID
+- `get_all_products`: Retrieves all products
+- `get_products_by_date_range`: Filters by date range
+- `consume_product`: Handles consumption (total/partial)
+- `delete_product`: Deletes product
+- `delete_all`: Deletes all products
 
-**Caratteristiche:**
-- Astrazione completa del layer database
-- Gestione conversione Model ↔ Dict
-- Logica business di consumo complessa
+**Features:**
+- Complete database layer abstraction
+- Model ↔ Dict conversion management
+- Complex consumption business logic
 
 ### FridgeService
 
-Contiene la logica di business per gestione frigorifero:
+Contains business logic for fridge management:
 
-**Metodi principali:**
-- `get_all_unconsumed_products`: Filtra prodotti con `finish_date = None`
-- `get_all_consumed_products`: Filtra prodotti con `finish_date != None`
-- `add_product_from_barcode`: Crea prodotto da barcode
-- `partially_consume_product`: Gestisce consumo parziale
-- `delete_product`: Eliminazione prodotto
+**Main methods:**
+- `get_all_unconsumed_products`: Filters products with `finish_date = None`
+- `get_all_consumed_products`: Filters products with `finish_date != None`
+- `add_product_from_barcode`: Creates product from barcode
+- `partially_consume_product`: Handles partial consumption
+- `delete_product`: Product deletion
 
-**Responsabilità:**
-- Validazione business rules
-- Coordinamento tra Factory e Repository
-- Logica di dominio specifica
+**Responsibilities:**
+- Business rules validation
+- Coordination between Factory and Repository
+- Specific domain logic
 
 ### AnalyticsService
 
-Gestisce calcolo statistiche consumi:
+Manages consumption statistics calculation:
 
-**Funzionalità:**
-- Aggregazione dati consumi per date
-- Calcolo metriche nutrizionali
-- Filtraggio per intervallo temporale
-- Supporto analisi per singolo prodotto
+**Features:**
+- Consumption data aggregation by date
+- Nutritional metrics calculation
+- Time range filtering
+- Single product analysis support
 
-## 🔒 Sicurezza
+## 🔒 Security
 
 ### CORS
-Configurato per permettere richieste da qualsiasi origine (da limitare in produzione):
+Configured to allow requests from any origin (to be limited in production):
 
 ```python
 app.add_middleware(
@@ -369,46 +369,46 @@ app.add_middleware(
 )
 ```
 
-### Validazione Input
-- Pydantic models per validazione automatica
+### Input Validation
+- Pydantic models for automatic validation
 - Query parameters validation
 - Path parameters constraints
 - Custom error messages
 
 ### Error Handling
-- HTTPException per errori API
-- Try-catch blocks in tutti gli endpoint
-- Logging degli errori
-- Messaggi di errore user-friendly
+- HTTPException for API errors
+- Try-catch blocks in all endpoints
+- Error logging
+- User-friendly error messages
 
 ## 🧪 Testing
 
 ### Unit Tests
 
 ```bash
-# Installa dipendenze testing
+# Install testing dependencies
 pip install pytest pytest-asyncio httpx
 
-# Esegui tests
+# Run tests
 pytest tests/
 
-# Con coverage
+# With coverage
 pytest tests/ --cov=src --cov-report=html
 ```
 
 ### Integration Tests
 
 ```bash
-# Avvia MongoDB per testing
+# Start MongoDB for testing
 docker-compose -f docker-compose.test.yaml up -d
 
-# Esegui integration tests
+# Run integration tests
 pytest tests/integration/
 ```
 
 ### API Testing
 
-Usa Swagger UI (`/docs`) per test manuali o strumenti come Postman/Insomnia.
+Use Swagger UI (`/docs`) for manual testing or tools like Postman/Insomnia.
 
 ## 📊 Database Schema
 
@@ -446,28 +446,28 @@ Usa Swagger UI (`/docs`) per test manuali o strumenti come Postman/Insomnia.
 
 ### MongoDB Connection Error
 ```bash
-# Verifica che MongoDB sia in esecuzione
+# Check that MongoDB is running
 docker ps
 
-# Controlla logs MongoDB
+# Check MongoDB logs
 docker logs grocewise_mongo
 
-# Riavvia MongoDB
+# Restart MongoDB
 docker-compose restart
 ```
 
 ### OpenFoodFacts API Error
-- Verifica credenziali nel `.env`
-- Controlla connessione internet
-- OpenFoodFacts potrebbe avere rate limiting
+- Verify credentials in `.env`
+- Check internet connection
+- OpenFoodFacts might have rate limiting
 
 ### Port Already in Use
 ```bash
-# Trova processo sulla porta 8000
+# Find process on port 8000
 netstat -ano | findstr :8000  # Windows
 lsof -i :8000                  # Linux/Mac
 
-# Cambia porta nel comando uvicorn
+# Change port in uvicorn command
 uvicorn src.main:app --port 8001
 ```
 
@@ -476,7 +476,7 @@ uvicorn src.main:app --port 8001
 ### Docker Deployment
 
 ```bash
-# Build immagine
+# Build image
 docker build -t grocewise-backend .
 
 # Run container
@@ -487,22 +487,22 @@ docker run -p 8000:8000 \
 ```
 
 ### Production Considerations
-- Usa variabili ambiente per configurazione
-- Implementa rate limiting
-- Aggiungi autenticazione JWT
-- Configura HTTPS
-- Set up monitoring e logging
+- Use environment variables for configuration
+- Implement rate limiting
+- Add JWT authentication
+- Configure HTTPS
+- Set up monitoring and logging
 - Use production WSGI server (Gunicorn)
 
 ## 📈 Performance
 
-### Ottimizzazioni Implementate
-- Connection pooling MongoDB
-- Lazy loading delle dipendenze
-- Caching delle factory instances
-- Query ottimizzate con indici MongoDB
+### Implemented Optimizations
+- MongoDB connection pooling
+- Lazy loading of dependencies
+- Caching of factory instances
+- Optimized queries with MongoDB indexes
 
-### Indici MongoDB Consigliati
+### Recommended MongoDB Indexes
 ```javascript
 db.products_history.createIndex({ "barcode": 1 })
 db.products_history.createIndex({ "buy_date": 1 })
@@ -510,16 +510,16 @@ db.products_history.createIndex({ "finish_date": 1 })
 db.products_history.createIndex({ "barcode": 1, "buy_date": 1 })
 ```
 
-## 🤝 Contributi
+## 🤝 Contributions
 
-Per contribuire al backend:
+To contribute to the backend:
 
-1. Segui i principi Clean Architecture
-2. Aggiungi unit tests per nuove funzionalità
-3. Aggiorna documentazione API
-4. Segui PEP 8 per stile codice
-5. Usa type hints Python
+1. Follow Clean Architecture principles
+2. Add unit tests for new features
+3. Update API documentation
+4. Follow PEP 8 for code style
+5. Use Python type hints
 
-## 📄 Licenza
+## 📄 License
 
-MIT License - Vedi file LICENSE nella root del progetto
+MIT License - See LICENSE file in the project root

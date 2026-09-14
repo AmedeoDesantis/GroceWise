@@ -27,7 +27,7 @@ class ProductFactory:
         )
 
     def _get_localized_name(self, raw_product: dict) -> str:
-        localization_priority = ["it", "en", "fr", "de"]
+        localization_priority = ["en", "it", "fr", "de"]
         base_key = ["product_name", "generic_name"]
         for key in base_key:
             for lang in localization_priority:
@@ -49,7 +49,7 @@ class ProductFactory:
                         return float(numbers)
             return 0.0
         
-        #caso versione sgocciolata / non sgocciolata
+        #drained/undrained version case
         return float(re.sub(r'[\\/].*', '', str(quantity)).strip())
     
     def _get_unit(self, raw_product: dict) -> Optional[str]:
@@ -87,7 +87,7 @@ class ProductFactory:
             response = self.client.product.get(barcode)
 
             if not response:
-                logger.warning(f"Barcode {barcode} non trovato su OpenFoodFacts. Generazione fallback.")
+                logger.warning(f"Barcode {barcode} not found on OpenFoodFacts. Generating fallback.")
                 return None
             raw_product = response
             product = Product(
@@ -113,7 +113,7 @@ class ProductFactory:
             product.remaining_quantity = product.quantity
             return product
         except Exception as e:
-            logger.error(f"Errore nella factory durante la creazione dell'alimento {barcode}: {str(e)}")
+            logger.error(f"Error in factory during product creation {barcode}: {str(e)}")
             return None
 
     def _apply_override(self, product: Product, override: BarcodeOverride) -> Product:
@@ -128,7 +128,7 @@ class ProductFactory:
         return product
 
     def build_from_dict(self, data: dict) -> Product:
-        """RICOSTRUZIONE: Legge il dizionario strutturato proveniente da MongoDB"""
+        """RECONSTRUCTION: Reads structured dictionary from MongoDB"""
         nutrients_data = data.get("nutrients", {})
         nutrients = self._build_nutrients(nutrients_data)
         quantity = data.get("quantity", 0.0)

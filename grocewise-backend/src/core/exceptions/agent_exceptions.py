@@ -1,15 +1,15 @@
 class AgentException(Exception):
-    """Eccezione base per il sottosistema agentico."""
+    """Base exception for the agent subsystem."""
     pass
 
 class AgentOccupiedException(AgentException):
-    """Sollevata quando il provider è sovraccarico (es. HTTP 503 Service Unavailable)."""
+    """Raised when the provider is overloaded (e.g., HTTP 503 Service Unavailable)."""
     pass
 
 class AgentQuotaExhaustedException(AgentException):
-    """Sollevata al superamento dei limiti di token o rate limit (es. HTTP 429)."""
+    """Raised when token limits or rate limits are exceeded (e.g., HTTP 429)."""
     pass
 
 class AgentUnavailableException(AgentException):
-    """Sollevata per errori di connessione, timeout o disservizio generico."""
+    """Raised for connection errors, timeouts, or generic service failures."""
     pass

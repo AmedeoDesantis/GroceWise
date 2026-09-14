@@ -50,7 +50,7 @@ def add_product(
 def consume_product(
     product_id: str = Path(..., min_length=24, max_length=24),
     consumed_at: datetime = Query(default_factory=datetime.now),
-    quantity: float | None = Query(None, gt=0, description="Quantità in grammi; se omessa consuma tutto il residuo"),
+    quantity: float | None = Query(None, gt=0, description="Quantity in grams; if omitted, consumes the entire remainder"),
     service: FridgeService = Depends(AppContainer.get_fridge_service),
 ):
     try:
