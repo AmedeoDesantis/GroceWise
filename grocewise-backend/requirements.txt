@@ -1,6 +1,9 @@
-fastapi
-openfoodfacts
-pydantic
-pymongo
-python-dotenv
+fastapi==0.136.3
 uvicorn[standard]
+pydantic==2.12.5
+pymongo==4.17.0
+certifi
+python-dotenv==1.2.2
+openfoodfacts==5.1.0
+google-genai==1.65.0
+sympy==1.14.0
