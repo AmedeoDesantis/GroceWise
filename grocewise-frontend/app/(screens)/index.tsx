@@ -7,20 +7,24 @@ import {
     StyleSheet,
     Alert,
     SafeAreaView,
-    TouchableOpacity
+    TouchableOpacity,
+    Platform,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useFridge } from '../../src/hooks/useFridge';
 import {
     FilterButtons,
-    ProductForm,
+    ProductFormModal,
     ProductList,
-    ChatDrawer
+    ChatDrawer,
+    FAB
 } from '../../src/components';
-import { colors, spacing, borderRadius, typography } from '../../src/styles/commonStyles';
+import { colors, spacing, borderRadius, typography, layout } from '../../src/styles/commonStyles';
 
 export default function FridgeScreen() {
     const router = useRouter();
     const [isChatOpen, setIsChatOpen] = useState(false);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const {
         products,
         loading,
@@ -43,6 +47,7 @@ export default function FridgeScreen() {
         try {
             await addProduct(barcode, price, buyDate.toISOString());
             Alert.alert('Success', 'Product added');
+            setIsAddModalOpen(false);
         } catch (error) {
             console.error('Error adding product:', error);
         }
@@ -93,44 +98,57 @@ export default function FridgeScreen() {
                 contentContainerStyle={styles.contentContainer}
                 showsVerticalScrollIndicator={false}
             >
-                <View style={styles.header}>
-                    <View style={styles.headerButtons}>
-                        <TouchableOpacity
-                            onPress={() => router.push('/analytics')}
-                            style={styles.statsButton}
-                        >
-                            <Text style={styles.statsButtonText}>Statistics</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => setIsChatOpen(true)}
-                            style={styles.chatButton}
-                        >
-                            <Text style={styles.chatButtonText}>AI Assistant</Text>
-                        </TouchableOpacity>
+                {/* Responsive Container */}
+                <View style={styles.responsiveContainer}>
+                    {/* Modern Header */}
+                    <View style={styles.header}>
+                        <View style={styles.headerActions}>
+                            <TouchableOpacity
+                                onPress={() => router.push('/analytics')}
+                                style={styles.iconButton}
+                                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                            >
+                                <Ionicons name="bar-chart" size={20} color={colors.text} />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => setIsChatOpen(true)}
+                                style={styles.iconButton}
+                                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                            >
+                                <Ionicons name="chatbubble" size={20} color={colors.text} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
+
+                    <FilterButtons
+                        activeFilter={filterType}
+                        onFilterChange={setFilterType}
+                    />
+
+                    <ProductList
+                        products={products}
+                        loading={loading}
+                        onConsume={handleConsumeProduct}
+                        onDelete={handleDeleteProduct}
+                        saveOverride={saveOverride}
+                    />
+
+                    {!loading && products.length > 0 && (
+                        <View style={styles.bottomSpacing} />
+                    )}
                 </View>
-
-                <ProductForm onSubmit={handleAddProduct} isLoading={loading} />
-
-                <FilterButtons
-                    activeFilter={filterType}
-                    onFilterChange={setFilterType}
-                />
-
-                <ProductList
-                    products={products}
-                    loading={loading}
-                    onConsume={handleConsumeProduct}
-                    onDelete={handleDeleteProduct}
-                    saveOverride={saveOverride}
-                />
-
-                {!loading && products.length > 0 && (
-                    <View style={styles.deleteAllButtonContainer}>
-                        <View style={{ paddingBottom: spacing.lg }} />
-                    </View>
-                )}
             </ScrollView>
+
+            {/* Floating Action Button */}
+            <FAB onPress={() => setIsAddModalOpen(true)} />
+
+            {/* Product Form Modal */}
+            <ProductFormModal
+                visible={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                onSubmit={handleAddProduct}
+                isLoading={loading}
+            />
 
             <ChatDrawer isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
         </SafeAreaView>
@@ -147,43 +165,39 @@ const styles = StyleSheet.create({
         backgroundColor: colors.background,
     },
     contentContainer: {
-        padding: spacing.lg,
-        paddingTop: spacing.md,
+        padding: spacing.md,
+    },
+    responsiveContainer: {
+        maxWidth: layout.maxWidth,
+        width: '100%',
+        alignSelf: 'center',
     },
     header: {
-        marginBottom: spacing.xl,
-        alignItems: 'center',
-    },
-    headerButtons: {
         flexDirection: 'row',
-        gap: spacing.md,
-        justifyContent: 'center',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: spacing.xl,
+        paddingVertical: spacing.md,
     },
-    statsButton: {
-        backgroundColor: colors.lightBg,
-        paddingVertical: spacing.sm,
-        paddingHorizontal: spacing.lg,
+    brand: {
+        ...typography.brand,
+        color: colors.primary,
+    },
+    headerActions: {
+        flexDirection: 'row',
+        gap: spacing.sm,
+    },
+    iconButton: {
+        width: 40,
+        height: 40,
         borderRadius: borderRadius.md,
+        backgroundColor: colors.white,
         borderWidth: 1,
         borderColor: colors.border,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    statsButtonText: {
-        ...typography.body,
-        color: colors.text,
-        fontWeight: '600',
-    },
-    chatButton: {
-        backgroundColor: colors.primary,
-        paddingVertical: spacing.sm,
-        paddingHorizontal: spacing.lg,
-        borderRadius: borderRadius.md,
-    },
-    chatButtonText: {
-        ...typography.body,
-        color: colors.white,
-        fontWeight: '600',
-    },
-    deleteAllButtonContainer: {
-        marginTop: spacing.lg,
+    bottomSpacing: {
+        height: 80,
     },
 });

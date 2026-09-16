@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 
 export const colors = {
     primary: '#B66D52',
@@ -51,6 +51,28 @@ export const shadows = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#F0EBE6',
     },
+    modal: {
+        ...(Platform.OS === 'web' ? {
+            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)',
+        } : {
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.2,
+            shadowRadius: 20,
+            elevation: 10,
+        }),
+    },
+    fab: {
+        ...(Platform.OS === 'web' ? {
+            boxShadow: '0 4px 12px rgba(182, 109, 82, 0.3)',
+        } : {
+            shadowColor: colors.primary,
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 8,
+            elevation: 4,
+        }),
+    },
 });
 
 export const typography = {
@@ -75,4 +97,14 @@ export const typography = {
         fontSize: 13,
         fontWeight: '400' as const,
     },
+    brand: {
+        fontSize: 24,
+        fontWeight: 'bold' as const,
+        letterSpacing: -0.3,
+    },
+};
+
+export const layout = {
+    maxWidth: 720,
+    contentPadding: spacing.lg,
 };

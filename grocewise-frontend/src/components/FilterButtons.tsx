@@ -4,9 +4,8 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
-    ActivityIndicator,
 } from 'react-native';
-import { colors, spacing, typography, shadows, borderRadius } from '../styles/commonStyles';
+import { colors, spacing, typography, borderRadius } from '../styles/commonStyles';
 import { FilterType } from '../types';
 
 interface FilterButtonsProps {
@@ -14,44 +13,37 @@ interface FilterButtonsProps {
     onFilterChange: (filter: FilterType) => void;
 }
 
+const FILTER_OPTIONS: { key: FilterType; label: string }[] = [
+    { key: 'unconsumed', label: 'Unconsumed' },
+    { key: 'all', label: 'All' },
+];
+
 export const FilterButtons: React.FC<FilterButtonsProps> = ({
     activeFilter,
     onFilterChange,
 }) => {
     return (
         <View style={styles.container}>
-            <TouchableOpacity
-                style={[
-                    styles.button,
-                    activeFilter === 'unconsumed' && styles.buttonActive,
-                ]}
-                onPress={() => onFilterChange('unconsumed')}
-            >
-                <Text
+            {FILTER_OPTIONS.map((option) => (
+                <TouchableOpacity
+                    key={option.key}
                     style={[
-                        styles.buttonText,
-                        activeFilter === 'unconsumed' && styles.buttonTextActive,
+                        styles.chip,
+                        activeFilter === option.key && styles.chipActive,
                     ]}
+                    onPress={() => onFilterChange(option.key)}
+                    activeOpacity={0.7}
                 >
-                    Non Consumati
-                </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={[
-                    styles.button,
-                    activeFilter === 'all' && styles.buttonActive,
-                ]}
-                onPress={() => onFilterChange('all')}
-            >
-                <Text
-                    style={[
-                        styles.buttonText,
-                        activeFilter === 'all' && styles.buttonTextActive,
-                    ]}
-                >
-                    Tutti
-                </Text>
-            </TouchableOpacity>
+                    <Text
+                        style={[
+                            styles.chipText,
+                            activeFilter === option.key && styles.chipTextActive,
+                        ]}
+                    >
+                        {option.label}
+                    </Text>
+                </TouchableOpacity>
+            ))}
         </View>
     );
 };
@@ -62,26 +54,25 @@ const styles = StyleSheet.create({
         marginBottom: spacing.lg,
         gap: spacing.sm,
     },
-    button: {
-        flex: 1,
-        paddingVertical: spacing.md,
-        paddingHorizontal: spacing.md,
-        borderRadius: borderRadius.md,
+    chip: {
+        paddingHorizontal: spacing.lg,
+        paddingVertical: spacing.sm,
+        borderRadius: borderRadius.pill,
+        backgroundColor: colors.white,
         borderWidth: 1,
         borderColor: colors.border,
-        backgroundColor: colors.white,
     },
-    buttonActive: {
+    chipActive: {
         backgroundColor: colors.primary,
         borderColor: colors.primary,
     },
-    buttonText: {
-        ...typography.body, // Sostituisce fontSize 14
-        textAlign: 'center',
-        fontWeight: '500', // Sovrascrive il fontWeight di default se serve
+    chipText: {
+        ...typography.body,
         color: colors.textSecondary,
+        fontWeight: '500',
     },
-    buttonTextActive: {
+    chipTextActive: {
         color: colors.white,
+        fontWeight: '600',
     },
 });

@@ -15,17 +15,17 @@ export default function RootLayout() {
           headerTitleStyle: {
             fontWeight: '600',
           },
-          headerShadowVisible: false, // CRITICAL: Removes shadow/line under header for flat design
+          headerShadowVisible: false,
         }}
       >
         <Stack.Screen
-          name="index"
+          name="(screens)/index"
           options={{
             headerTitle: 'GroceWise',
           }}
         />
         <Stack.Screen
-          name="analytics"
+          name="(screens)/analytics"
           options={{
             headerTitle: 'Consumption Statistics',
           }}

@@ -12,8 +12,8 @@ import { colors, spacing, borderRadius, shadows, typography } from '../styles/co
 
 import { BARCODE_MIN_LENGTH, BARCODE_MAX_LENGTH, DEFAULT_PRICE } from '../constants/config';
 
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { DatePicker } from './DatePicker';
 
 interface ProductFormProps {
     onSubmit: (barcode: string, price: number, buyDate: Date) => Promise<void>;
@@ -29,7 +29,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     const [scanning, setScanning] = useState(false);
 
     const [buyDate, setBuyDate] = useState<Date>(new Date());
-    const [showDatePicker, setShowDatePicker] = useState(false);
 
     const [permission, requestPermission] = useCameraPermissions();
 
@@ -56,13 +55,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         if (data) {
             setBarcode(data);
             setScanning(false);
-        }
-    };
-
-    const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
-        setShowDatePicker(false);
-        if (selectedDate) {
-            setBuyDate(selectedDate);
         }
     };
 
@@ -138,26 +130,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 editable={!isLoading}
             />
 
-            <Text style={styles.fieldLabel}>Purchase Date:</Text>
-            <TouchableOpacity
-                style={styles.datePickerButton}
-                onPress={() => setShowDatePicker(true)}
+            <DatePicker
+                value={buyDate}
+                onChange={setBuyDate}
+                label="Purchase Date:"
+                maxDate={new Date()}
                 disabled={isLoading}
-            >
-                <Text style={styles.datePickerButtonText}>
-                    {buyDate.toLocaleDateString('en-US')}
-                </Text>
-            </TouchableOpacity>
-
-            {showDatePicker && (
-                <DateTimePicker
-                    value={buyDate}
-                    mode="date"
-                    display="default"
-                    maximumDate={new Date()}
-                    onChange={onDateChange}
-                />
-            )}
+            />
 
             <TouchableOpacity
                 style={[styles.button, styles.submitButton, isLoading && styles.buttonDisabled]}
@@ -216,19 +195,6 @@ export const styles = StyleSheet.create({
         padding: spacing.md,
         marginBottom: spacing.md,
         backgroundColor: colors.lightBg,
-        color: colors.text,
-    },
-    datePickerButton: {
-        borderWidth: 1,
-        borderColor: colors.border,
-        borderRadius: borderRadius.md,
-        padding: spacing.md,
-        marginBottom: spacing.xl,
-        backgroundColor: colors.lightBg,
-        justifyContent: 'center',
-    },
-    datePickerButtonText: {
-        ...typography.body,
         color: colors.text,
     },
     button: {
