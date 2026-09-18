@@ -24,7 +24,13 @@ class DayStatsFactory:
     @staticmethod
     def build_from_consumption(product: Product, quantity: float) -> DayStats:
         """Statistiche proporzionali a un singolo evento di consumo."""
-        weight_ratio = quantity / product.quantity if product.quantity and product.quantity > 0 else 0.0
+        if not quantity or quantity <= 0:
+            return DayStats()
+            
+        if not product.quantity or product.quantity <= 0:
+            return DayStats()
+            
+        weight_ratio = quantity / product.quantity
         hundred_grams_units = quantity / 100
 
         nutrients = product.nutrients

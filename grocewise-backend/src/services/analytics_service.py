@@ -19,10 +19,13 @@ class AnalyticsService:
         products = self.repository.get_by_barcode(barcode)
         return self._get_consumption_statistics_from_products(products, start_date, end_date)
 
-    def _get_consumption_statistics_from_products(self, products: list[Product], start_date: datetime, end_date: datetime) -> AnalyticsResponse:
+    def _get_consumption_statistics_from_products(self, products: list[Product] | None, start_date: datetime, end_date: datetime) -> AnalyticsResponse:
         daily_stats = {}
+        if not products:
+            return AnalyticsResponse(daily_analytics=daily_stats)
+            
         for product in products:
-            consumptions = [cons for cons in product.consumptions if start_date <= cons.date <= end_date]
+            consumptions = [cons for cons in product.consumptions if start_date.date() <= cons.date.date() <= end_date.date()]
                 
             for cons in consumptions:
                 date = cons.date.date()

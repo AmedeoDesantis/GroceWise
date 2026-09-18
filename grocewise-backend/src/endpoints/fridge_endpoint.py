@@ -62,18 +62,6 @@ def consume_product(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@router.delete("/products/{product_id}", status_code=200)
-def delete_product(
-    product_id: str = Path(..., min_length=24, max_length=24),
-    service: FridgeService = Depends(AppContainer.get_fridge_service)
-):
-    try:
-        success = service.delete_product(product_id)
-        if not success:
-            raise HTTPException(status_code=404, detail="Product not found")
-        return {"status": "success", "message": f"Product {product_id} deleted"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
     
 @router.delete("/products/all", status_code=200)
 def delete_all_products(
@@ -83,4 +71,21 @@ def delete_all_products(
         deleted_count = service.delete_all_products()
         return {"status": "success", "message": f"Deleted {deleted_count} products"}
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))    
+    
+@router.delete("/products/{product_id}", status_code=200)
+def delete_product(
+    product_id: str = Path(..., min_length=24, max_length=24),
+    service: FridgeService = Depends(AppContainer.get_fridge_service)
+):
+    try:
+        success = service.delete_product(product_id)
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+    if not success:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    return {"status": "success", "message": f"Product {product_id} deleted"}
+
+    

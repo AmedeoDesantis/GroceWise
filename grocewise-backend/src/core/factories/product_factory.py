@@ -19,6 +19,10 @@ class ProductFactory:
         self.product_override_repository = override_repository
 
     def _build_nutrients(self, raw_nutrients: dict) -> Nutrients:
+        
+        if not raw_nutrients:
+            return Nutrients()
+        
         return Nutrients(
             calories=round(raw_nutrients.get("calories", raw_nutrients.get("energy-kcal_100g", 0))),   
             proteins=round(raw_nutrients.get("proteins", raw_nutrients.get("proteins_100g", 0.0)), 2),

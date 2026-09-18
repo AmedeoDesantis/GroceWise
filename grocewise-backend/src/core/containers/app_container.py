@@ -13,33 +13,40 @@ from src.core.repositories.override_repository import OverrideRepository
 from src.infrastructure.agents.tool_wrapper import ToolWrapper
 
 class AppContainer:
-    _mongo_client = MongoDB()
+    _mongo_client: MongoDB | None = None
     _fridge_service: FridgeService | None = None
     _analytics_service: AnalyticsService | None = None
     _chat_service: ChatService | None = None
+    _override_service: OverrideService | None = None
     
+    
+    @classmethod
+    def get_mongo_client(cls) -> MongoDB:
+        if cls._mongo_client is None:
+            cls._mongo_client = MongoDB()
+        return cls._mongo_client
 
     @classmethod
     def get_fridge_service(cls) -> FridgeService:
         if cls._fridge_service is None:
-            factory = ProductFactory(override_repository = OverrideRepository(mongo_client=cls._mongo_client))
-            repo = ProductRepository(mongo_client=cls._mongo_client, factory=factory)
+            factory = ProductFactory(override_repository = OverrideRepository(mongo_client=cls.get_mongo_client()))
+            repo = ProductRepository(mongo_client=cls.get_mongo_client(), factory=factory)
             cls._fridge_service = FridgeService(repository=repo, factory=factory)
         return cls._fridge_service
 
     @classmethod
     def get_override_service(cls) -> OverrideService:
         if cls._override_service is None:
-            repo = OverrideRepository(mongo_client=cls._mongo_client)
+            repo = OverrideRepository(mongo_client=cls.get_mongo_client())
             cls._override_service = OverrideService(override_repository=repo)
         return cls._override_service
 
     @classmethod
     def get_analytics_service(cls) -> AnalyticsService:
         if cls._analytics_service is None:
-            factory = ProductFactory(override_repository = OverrideRepository(mongo_client=cls._mongo_client))
+            factory = ProductFactory(override_repository = OverrideRepository(mongo_client=cls.get_mongo_client()))
             stats_factory = DayStatsFactory()
-            repo = ProductRepository(mongo_client=cls._mongo_client, factory=factory)
+            repo = ProductRepository(mongo_client=cls.get_mongo_client(), factory=factory)
             cls._analytics_service = AnalyticsService(repository=repo, day_stat_factory=stats_factory)
         return cls._analytics_service
 

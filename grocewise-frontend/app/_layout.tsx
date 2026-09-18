@@ -19,9 +19,10 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen
-          name="(screens)/index"
+          name="index"
           options={{
             headerTitle: 'GroceWise',
+            title: 'GroceWise'
           }}
         />
         <Stack.Screen

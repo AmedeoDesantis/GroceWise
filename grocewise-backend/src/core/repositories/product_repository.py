@@ -30,11 +30,11 @@ class ProductRepository:
             ],
             "ingredients": product.ingredients,
             "nutrients": {
-                "calories": product.nutrients.calories if product.nutrients else None,
-                "carbohydrates": product.nutrients.carbohydrates if product.nutrients else None,
-                "proteins": product.nutrients.proteins if product.nutrients else None,
-                "fats": product.nutrients.fats if product.nutrients else None,
-            },
+                "calories": product.nutrients.calories,
+                "carbohydrates": product.nutrients.carbohydrates,
+                "proteins": product.nutrients.proteins,
+                "fats": product.nutrients.fats,
+            } if product.nutrients else None,
         }
 
     def add_product(self, product: Product) -> str:

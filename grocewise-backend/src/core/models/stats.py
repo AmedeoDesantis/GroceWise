@@ -1,7 +1,7 @@
 from __future__ import annotations 
 from pydantic import BaseModel
 from typing import List, Dict
-from datetime import datetime
+from datetime import datetime, date
 
 class DayStats(BaseModel):
     calories: float = 0.0
@@ -21,14 +21,14 @@ class DayStats(BaseModel):
 
     def __truediv__(self, other: int) -> DayStats:
         if other != 0:
-            self.calories=round(self.calories / other),
-            self.carbohydrates=round(self.carbohydrates / other, 2),
-            self.proteins=round(self.proteins / other, 2),
-            self.fats=round(self.fats / other, 2),
+            self.calories=round(self.calories / other)
+            self.carbohydrates=round(self.carbohydrates / other, 2)
+            self.proteins=round(self.proteins / other, 2)
+            self.fats=round(self.fats / other, 2)
             self.cost=round(self.cost / other, 2)
         
         return self
 
 
 class AnalyticsResponse(BaseModel):
-    daily_analytics: Dict[datetime, DayStats] = {}
+    daily_analytics: Dict[date, DayStats] = {}

@@ -13,12 +13,11 @@ def get_consumption_statistics(
     service: AnalyticsService = Depends(AppContainer.get_analytics_service)
 ):
     try:
-        # Convert string dates to datetime objects
         start_date_dt = datetime.strptime(start_date, "%Y-%m-%d")
         end_date_dt = datetime.strptime(end_date, "%Y-%m-%d")
         
         if start_date_dt > end_date_dt:
-            raise HTTPException(status_code=400, detail="Start date must be before or equal to end date.")
+            raise ValueError("Start date must be before or equal to end date.")
         
         return service.get_consumption_statistics(start_date=start_date_dt, end_date=end_date_dt)
     except ValueError as e:
@@ -33,14 +32,15 @@ def get_product_consumption_statistics(
     end_date: str = Query(..., description="End date in YYYY-MM-DD format"),
     service: AnalyticsService = Depends(AppContainer.get_analytics_service)
 ):
-    try:
+    try: 
         # Convert string dates to datetime objects
         start_date_dt = datetime.strptime(start_date, "%Y-%m-%d")
         end_date_dt = datetime.strptime(end_date, "%Y-%m-%d")
         
         if start_date_dt > end_date_dt:
-            raise HTTPException(status_code=400, detail="Start date must be before or equal to end date.")
+            raise ValueError(status_code=400, detail="Start date must be before or equal to end date.")
         
+
         return service.get_product_consumption_statistics(barcode=barcode, start_date=start_date_dt, end_date=end_date_dt)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
